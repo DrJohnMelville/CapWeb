@@ -17,6 +17,6 @@ namespace IdentityServer4.Quickstart.UI
             Error = new ErrorMessage { Error = error };
         }
 
-        public ErrorMessage Error { get; set; }
+        public ErrorMessage? Error { get; set; }
     }
 }

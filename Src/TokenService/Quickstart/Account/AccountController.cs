@@ -212,12 +212,12 @@ namespace IdentityServer4.Quickstart.UI
         /*****************************************/
         /* helper APIs for the AccountController */
         /*****************************************/
-        private async Task<LoginViewModel> BuildLoginViewModelAsync(string returnUrl)
+        private async Task<LoginViewModel> BuildLoginViewModelAsync(string? returnUrl)
         {
             var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-            if (context?.IdP != null && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
+            if (context?.IdP is { } currentIdp && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
             {
-                var local = context.IdP == IdentityServer4.IdentityServerConstants.LocalIdentityProvider;
+                var local = currentIdp == IdentityServer4.IdentityServerConstants.LocalIdentityProvider;
 
                 // this is meant to short circuit the UI and only trigger the one external IdP
                 var vm = new LoginViewModel
@@ -229,7 +229,7 @@ namespace IdentityServer4.Quickstart.UI
 
                 if (!local)
                 {
-                    vm.ExternalProviders = new[] { new ExternalProvider { AuthenticationScheme = context.IdP } };
+                    vm.ExternalProviders = new[] { new ExternalProvider { AuthenticationScheme = currentIdp } };
                 }
 
                 return vm;
@@ -304,7 +304,7 @@ namespace IdentityServer4.Quickstart.UI
             return vm;
         }
 
-        private async Task<LoggedOutViewModel> BuildLoggedOutViewModelAsync(string logoutId)
+        private async Task<LoggedOutViewModel> BuildLoggedOutViewModelAsync(string? logoutId)
         {
             // get context information (client name, post logout redirect URI and iframe for federated signout)
             var logout = await _interaction.GetLogoutContextAsync(logoutId);

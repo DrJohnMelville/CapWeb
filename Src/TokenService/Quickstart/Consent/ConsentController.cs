@@ -104,10 +104,10 @@ namespace IdentityServer4.Quickstart.UI
             var request = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
             if (request == null) return result;
 
-            ConsentResponse grantedConsent = null;
+            ConsentResponse? grantedConsent = null;
 
             // user clicked 'no' - send back the standard 'access_denied' response
-            if (model?.Button == "no")
+            if (model.Button == "no")
             {
                 grantedConsent = ConsentResponse.Denied;
 
@@ -115,7 +115,7 @@ namespace IdentityServer4.Quickstart.UI
                 await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.ClientId, request.ScopesRequested));
             }
             // user clicked 'yes' - validate the data
-            else if (model?.Button == "yes")
+            else if (model.Button == "yes")
             {
                 // if the user consented to some scope, build the response model
                 if (model.ScopesConsented != null && model.ScopesConsented.Any())
@@ -163,7 +163,7 @@ namespace IdentityServer4.Quickstart.UI
             return result;
         }
 
-        private async Task<ConsentViewModel> BuildViewModelAsync(string returnUrl, ConsentInputModel model = null)
+        private async Task<ConsentViewModel?> BuildViewModelAsync(string? returnUrl, ConsentInputModel? model = null)
         {
             var request = await _interaction.GetAuthorizationContextAsync(returnUrl);
             if (request != null)
@@ -195,7 +195,7 @@ namespace IdentityServer4.Quickstart.UI
         }
 
         private ConsentViewModel CreateConsentViewModel(
-            ConsentInputModel model, string returnUrl,
+            ConsentInputModel? model, string? returnUrl,
             AuthorizationRequest request,
             Client client, Resources resources)
         {
