@@ -43,10 +43,9 @@ namespace TokenService
                 iis.AuthenticationDisplayName = "Windows";
                 iis.AutomaticAuthentication = false;
             });
-
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-
+            
+            services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("DefaultConnection"));
+            
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
