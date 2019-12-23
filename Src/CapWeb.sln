@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenService", "TokenService\TokenService.csproj", "{58C8915F-0196-47CE-96BC-D04308A1EB9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceTest", "TokenServiceTest\TokenServiceTest.csproj", "{6551696D-C858-4419-96B6-CA0BA2A19519}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{58C8915F-0196-47CE-96BC-D04308A1EB9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58C8915F-0196-47CE-96BC-D04308A1EB9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58C8915F-0196-47CE-96BC-D04308A1EB9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6551696D-C858-4419-96B6-CA0BA2A19519}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6551696D-C858-4419-96B6-CA0BA2A19519}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6551696D-C858-4419-96B6-CA0BA2A19519}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6551696D-C858-4419-96B6-CA0BA2A19519}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
