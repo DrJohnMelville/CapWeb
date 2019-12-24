@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -8,7 +7,6 @@ using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TokenService.Models;
 
 namespace TokenService.Controllers.Users
@@ -31,10 +29,10 @@ namespace TokenService.Controllers.Users
         // GET
         public IActionResult Index()
         {
-            return View(new EditUserModel(CurrentUser().Claims));
+            return View(new EditUserModel(CurrentUserClaimPrincipal().Claims));
         }
 
-        private ClaimsPrincipal CurrentUser() => contextFactory.HttpContext.User;
+        private ClaimsPrincipal CurrentUserClaimPrincipal() => contextFactory.HttpContext.User;
 
         [HttpPost]
         public async Task<IActionResult> Index(EditUserModel model, string button)
@@ -51,13 +49,18 @@ namespace TokenService.Controllers.Users
                         break;
                 }
             }
+
+            model.CurrentPassword = "";
             return View(model);
         }
         private async Task ChangeName(EditUserModel model)
         {
-            var user = await userManager.GetUserAsync(CurrentUser());
+            var user = await CurrentUserAsync();
             await AddOrReplaceClaim(model, user, new Claim(JwtClaimTypes.Name, model.FullName));
+            await signInManager.SignInAsync(user, true, "");
         }
+
+        private Task<ApplicationUser> CurrentUserAsync() => userManager.GetUserAsync(CurrentUserClaimPrincipal());
 
         private async Task AddOrReplaceClaim(EditUserModel model, ApplicationUser user, Claim claim)
         {
@@ -71,14 +74,43 @@ namespace TokenService.Controllers.Users
             {
                 await userManager.AddClaimAsync(user, claim);
             }
-
-            await signInManager.SignInAsync(user, true, "");
         }
 
         private async Task ChangePassword(EditUserModel model)
         {
-            await Task.Yield();
-            throw new System.NotImplementedException();
+            var user = await CurrentUserAsync();
+            if (!CheckPasswordsSame(model)) return;
+            HandlePasswordResetResponse(model, await userManager.ChangePasswordAsync(user, model.CurrentPassword, model.Password));
+        }
+
+        private void HandlePasswordResetResponse(EditUserModel model, IdentityResult result)
+        {
+            if (!result.Succeeded)
+            {
+                ShowPasswordErrors(result.Errors);
+            }
+            else
+            {
+                PreventNewPasswordFromReturningToClient(model);
+            }
+        }
+
+        private static void PreventNewPasswordFromReturningToClient(EditUserModel model) => 
+            model.Password = model.PasswordVerification = "";
+
+        private void ShowPasswordErrors(IEnumerable<IdentityError> errors)
+        {
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError("Password", error.Description);
+            }
+        }
+
+        private bool CheckPasswordsSame(EditUserModel model)
+        {
+            if (model.Password.Equals(model.PasswordVerification, StringComparison.Ordinal)) return true;
+            ModelState.AddModelError("Password", "Passowrd and Verification must be the same");
+            return false;
         }
     }
 }

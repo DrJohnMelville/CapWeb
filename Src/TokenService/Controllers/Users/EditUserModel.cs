@@ -15,6 +15,8 @@ namespace TokenService.Controllers.Users
         public string? Password { get; set; }
         public string? PasswordVerification { get; set; }
 
+        public string? CurrentPassword { get; set; }
+
         public EditUserModel()
         {
         }
