@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using IdentityServer4.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TokenService.Configuration.IdentityServer;
 using TokenService.Models;
@@ -16,13 +18,14 @@ namespace TokenService.Data
         }
 
         public DbSet<SigningCredentialData> SigningCredentials { get; set;  } = null!;
-
+        public DbSet<PersistedGrant> PersistedGrants { get; set; } = null!;
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<SigningCredentialData>().HasKey(i => i.KeyId);
-            
+            builder.Entity<PersistedGrant>().HasKey(i => i.Key);
             
             PatchSqLiteDateTimeOffsets(builder);
         }
