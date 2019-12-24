@@ -50,7 +50,7 @@ namespace TokenService.Configuration.IdentityServer
         {
             await using var db = dbFactory();
             await using var keyComputer = new SigningCredentialCacheUpdater(db,
-              await db.SigningCredentials.ToListAsync(), systemClock.UtcNow);
+              await db.SigningCredentials.AsNoTracking().ToListAsync(), systemClock.UtcNow);
             signingCredential = keyComputer.SigningCredentials();
             verificationCredentials = keyComputer.VerificationKeys();
             CacheExpiresAt = keyComputer.NextExpiration();

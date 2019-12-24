@@ -20,7 +20,8 @@ namespace TokenService.Configuration
                 .AddInMemoryIdentityResources(Config.Ids)
                 .AddInMemoryApiResources(Config.Apis)
                 .AddInMemoryClients(Config.Clients)
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddPersistedGrantStore<PersistentGrantsStore>();
 
             RegisterSigningTokenServer(services);
         }
