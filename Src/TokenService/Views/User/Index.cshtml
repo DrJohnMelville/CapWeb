@@ -1,0 +1,61 @@
+﻿@model TokenService.Controllers.Users.EditUserModel
+            <div class="col-sm-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">User Information</h3>
+                    </div>
+
+                    <partial name="_ValidationSummary" />
+
+                    <div class="panel-body">
+
+                        <form>
+                            <fieldset>
+                                <div class="form-group">
+                                    <label asp-for="Email"></label>
+                                    <input class="form-control" placeholder="Email" asp-for="Email" type="email" 
+                                           readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="FullName">Full Name</label>
+                                    <input class="form-control" placeholder="Name" asp-for="FullName" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary" name="button" value="name">Update Name</button>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Password Reset</h3>
+                    </div>
+
+                    <partial name="_ValidationSummary" />
+
+                    <div class="panel-body">
+
+                        <form>
+                            <fieldset>
+                                <div class="form-group">
+                                    <label asp-for="CurrentPassword">Current Password</label>
+                                    <input type="password" class="form-control" placeholder="Password" asp-for="CurrentPassword" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Password">New Password</label>
+                                    <input type="password" class="form-control" placeholder="Password" asp-for="Password" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="PasswordVerification">Retype New Pasword</label>
+                                    <input type="password" class="form-control" placeholder="Again:" asp-for="PasswordVerification" autocomplete="off">
+                                </div>
+
+                                <div class="form-group">
+                                    <button class="btn btn-primary" name="button" value="password">Update Password</button>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
