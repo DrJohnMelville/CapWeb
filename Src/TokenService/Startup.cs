@@ -77,7 +77,7 @@ namespace TokenService
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapDefaultControllerRoute().RequireAuthorization();
             });
         }
 
