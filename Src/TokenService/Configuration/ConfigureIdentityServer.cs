@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using TokenService.Configuration.IdentityServer;
 using TokenService.Models;
@@ -20,10 +21,15 @@ namespace TokenService.Configuration
                 .AddInMemoryApiResources(Config.Apis)
                 .AddInMemoryClients(Config.Clients)
                 .AddAspNetIdentity<ApplicationUser>();
-            // not recommended for production - you need to store your key material somewhere secure
-            builder.AddDeveloperSigningCredential();
 
+            RegisterSigningTokenServer(services);
+        }
+
+        private static void RegisterSigningTokenServer(IServiceCollection services)
+        {
             services.AddSingleton<SigningCredentialDatabase, SigningCredentialDatabase>();
+            services.AddTransient<ISigningCredentialStore, SigningCredentialStore>();
+            services.AddTransient<IValidationKeysStore, ValidationKeysStore>();
         }
 
         public static void UseTokenService(this IApplicationBuilder app) => app.UseIdentityServer();

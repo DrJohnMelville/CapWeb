@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
-using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,44 +11,14 @@ using TokenService.Data;
 
 namespace TokenService.Configuration.IdentityServer
 {
-    // :ISigningCredentialStore, IValidationKeysStore
-
-    public class SigningCredentialStore : ISigningCredentialStore
-    {
-        private readonly SigningCredentialDatabase db;
-
-        public SigningCredentialStore(SigningCredentialDatabase db)
-        {
-            this.db = db;
-        }
-
-        public Task<SigningCredentials> GetSigningCredentialsAsync() =>
-            db.GetSigningCredentialsAsync();
-    }
-    
-    public class ValidationKeysStore: IValidationKeysStore
-    {
-        private readonly SigningCredentialDatabase db;
-
-        public ValidationKeysStore(SigningCredentialDatabase db)
-        {
-            this.db = db;
-        }
-
-        public Task<IEnumerable<SecurityKeyInfo>> GetValidationKeysAsync()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class SigningCredentialDatabase
     {
         private readonly Func<ApplicationDbContext> dbFactory;
         private readonly ISystemClock systemClock;
 
         private SigningCredentials? signingCredential;
-        DateTime timeOfNextKeyRotation = DateTime.MinValue;
-        private List<SecurityKeyInfo>? verificationCredentials;
+        private IEnumerable<SecurityKeyInfo> verificationCredentials = Array.Empty<SecurityKeyInfo>();
+        public DateTimeOffset CacheExpiresAt { get; private set; } = DateTime.MinValue;
 
         public SigningCredentialDatabase(Func<ApplicationDbContext> dbFactory, ISystemClock systemClock)
         {
@@ -59,56 +28,97 @@ namespace TokenService.Configuration.IdentityServer
         public async Task<SigningCredentials> GetSigningCredentialsAsync()
         {
             await RecomputeKeysIfNeeded();
-
             return signingCredential ?? throw new InvalidDataException("Should never get here, null signingCredential");
         }
 
+        public async Task<IEnumerable<SecurityKeyInfo>> GetValidationKeysAsync()
+        {
+            await RecomputeKeysIfNeeded();
+            return verificationCredentials;
+        }
+
+
         private async Task RecomputeKeysIfNeeded()
         {
-            if (timeOfNextKeyRotation <= systemClock.UtcNow)
+            if (CacheExpiresAt <= systemClock.UtcNow)
             {
-                timeOfNextKeyRotation = await RecomputeKeys();
+                await RecomputeKeys();
             }
         }
 
-        private async Task<DateTime> RecomputeKeys()
+        private async Task RecomputeKeys()
         {
-            using (var db = dbFactory())
-            {
-                var time = systemClock.UtcNow;
-                var list = await db.SigningCredentials.ToListAsync();
-                signingCredential = ComputeActiveSigningKey(list, time, db).ToSigningCrendentials();
-                RemoveKeys(ExpiredKeys(list, time), list, db);
-                await db.SaveChangesAsync();
-                verificationCredentials = list.Select(i => i.ToSecurityKeyInfo()).ToList();
-            }
-            return DateTime.Now;
+            await using var db = dbFactory();
+            await using var keyComputer = new SigningCredentialCacheUpdater(db,
+              await db.SigningCredentials.ToListAsync(), systemClock.UtcNow);
+            signingCredential = keyComputer.SigningCredentials();
+            verificationCredentials = keyComputer.VerificationKeys();
+            CacheExpiresAt = keyComputer.NextExpiration();
         }
 
-        private static List<SigningCredentialData> ExpiredKeys(List<SigningCredentialData> list, DateTimeOffset time)
+    }
+
+    public class SigningCredentialCacheUpdater: IAsyncDisposable
+    {
+        private readonly ApplicationDbContext db;
+        private readonly IList<SigningCredentialData> list;
+        private readonly DateTimeOffset time;
+        private SigningCredentialData? activeCredential;
+        private bool databaseNeedsUpdate;
+        public SigningCredentials SigningCredentials() => 
+            activeCredential?.ToSigningCrendentials() ?? throw new InvalidDataException("No active credential");
+        public IList<SecurityKeyInfo> VerificationKeys() => list.Select(i => i.ToSecurityKeyInfo()).ToList();
+        public SigningCredentialCacheUpdater(ApplicationDbContext db, IList<SigningCredentialData> list, DateTimeOffset time)
         {
-            return list.Where(i=>i.EndOfGracePeriodDate() < time).ToList();
+            this.db = db;
+            this.list = list;
+            this.time = time;
+            UpdateList();
         }
 
-        private static void RemoveKeys(List<SigningCredentialData> expiredKeys, List<SigningCredentialData> list, ApplicationDbContext db)
+        public DateTimeOffset NextExpiration() =>
+            list.Select(i => i.EndOfGracePeriodDate())
+                .Append(activeCredential?.ExpirationDate()??DateTimeOffset.Now)
+                .Min();
+
+        private void UpdateList()
         {
-            foreach (var key in expiredKeys)
+            ComputeActiveCredential();
+            RemoveKeys();
+        }
+
+        public ValueTask DisposeAsync() => 
+            databaseNeedsUpdate ? new ValueTask(db.SaveChangesAsync()) : new ValueTask();
+
+        private void RemoveKeys()
+        {
+            foreach (var key in ExpiredKeys())
             {
                 list.Remove(key);
                 db.SigningCredentials.Remove(key);
+                databaseNeedsUpdate = false;
             }
         }
 
-        private static SigningCredentialData ComputeActiveSigningKey(List<SigningCredentialData> list, DateTimeOffset time, ApplicationDbContext db)
+        private List<SigningCredentialData> ExpiredKeys() => 
+            list.Where(i=>i.EndOfGracePeriodDate() < time).ToList();
+
+        private void ComputeActiveCredential()
         {
-            var principal = list.FirstOrDefault(i => i.ExpirationDate() > time);
-            if (principal == null)
-            {
-                principal = SigningCredentialData.CreateNewCredential(time.DateTime);
-                db.SigningCredentials.Add(principal);
-            }
-
-            return principal;
+            activeCredential = ActiveCredential();
+            if (activeCredential != null) return;
+            CreateNewCredential();
         }
+
+        private void CreateNewCredential()
+        {
+            activeCredential = SigningCredentialData.CreateNewCredential(time);
+            db.SigningCredentials.Add(activeCredential);
+            list.Add(activeCredential);
+            databaseNeedsUpdate = true;
+        }
+
+        private SigningCredentialData? ActiveCredential() => 
+            list.FirstOrDefault(i => time < i.ExpirationDate() );
     }
 }
