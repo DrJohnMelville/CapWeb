@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TokenService.Configuration;
+using TokenService.Services.EmailServices;
 
 namespace TokenService
 {
@@ -30,6 +31,31 @@ namespace TokenService
         {
             services.AddControllersWithViews();
 
+            IisConfiguration(services);
+
+            services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("DefaultConnection"));
+            
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddTransient<ISendEmailService, SendEmailService>();
+                
+            services.AddTokenServer();
+
+            // services.AddAuthentication()
+            //     .AddGoogle(options =>
+            //     {
+            //         // register your IdentityServer with Google at https://console.developers.google.com
+            //         // enable the Google+ API
+            //         // set the redirect URI to http://localhost:5000/signin-google
+            //         options.ClientId = "copy client ID from Google here";
+            //         options.ClientSecret = "copy client secret from Google here";
+            //     });
+        }
+
+        private static void IisConfiguration(IServiceCollection services)
+        {
             // configures IIS out-of-proc settings (see https://github.com/aspnet/AspNetCore/issues/14882)
             services.Configure<IISOptions>(iis =>
             {
@@ -43,24 +69,6 @@ namespace TokenService
                 iis.AuthenticationDisplayName = "Windows";
                 iis.AutomaticAuthentication = false;
             });
-            
-            services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("DefaultConnection"));
-            
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-                
-            services.AddTokenServer();
-
-            // services.AddAuthentication()
-            //     .AddGoogle(options =>
-            //     {
-            //         // register your IdentityServer with Google at https://console.developers.google.com
-            //         // enable the Google+ API
-            //         // set the redirect URI to http://localhost:5000/signin-google
-            //         options.ClientId = "copy client ID from Google here";
-            //         options.ClientSecret = "copy client secret from Google here";
-            //     });
         }
 
         public void Configure(IApplicationBuilder app)

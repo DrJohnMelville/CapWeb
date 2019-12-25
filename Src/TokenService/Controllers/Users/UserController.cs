@@ -108,6 +108,8 @@ namespace TokenService.Controllers.Users
 
         private bool CheckPasswordsSame(EditUserModel model)
         {
+            model.Password ??= "";
+            model.PasswordVerification ??= "";
             if (model.Password.Equals(model.PasswordVerification, StringComparison.Ordinal)) return true;
             ModelState.AddModelError("Password", "Password and Verification must be the same");
             return false;

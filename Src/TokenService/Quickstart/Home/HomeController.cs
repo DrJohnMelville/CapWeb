@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using TokenService.Services.EmailServices;
 
 namespace IdentityServer4.Quickstart.UI
 {
@@ -20,11 +21,14 @@ namespace IdentityServer4.Quickstart.UI
         private readonly IWebHostEnvironment _environment;
         private readonly ILogger _logger;
 
-        public HomeController(IIdentityServerInteractionService interaction, IWebHostEnvironment environment, ILogger<HomeController> logger)
+        public HomeController(IIdentityServerInteractionService interaction, IWebHostEnvironment environment, 
+            ILogger<HomeController> logger)
         {
             _interaction = interaction;
             _environment = environment;
             _logger = logger;
+
+            email.SendEmail("Santa@NorthPole.Org", "Naughty List", "Not Logged");
         }
 
         public IActionResult Index()
