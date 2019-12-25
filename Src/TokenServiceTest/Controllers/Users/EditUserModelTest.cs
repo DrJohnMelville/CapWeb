@@ -17,8 +17,8 @@ namespace TokenServiceTest.Controllers.Users
             };
 
             var sut = new EditUserModel(claims);
-            Assert.Equal("", sut.Password);
-            Assert.Equal("", sut.PasswordVerification);
+            Assert.Null(sut.Password);
+            Assert.Null(sut.PasswordVerification);
             Assert.Equal("email", sut.Email);
             Assert.Equal("Name", sut.FullName);
             
