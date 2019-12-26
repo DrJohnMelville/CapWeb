@@ -7,6 +7,7 @@ using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using TokenService.Models;
 
 namespace TokenService.Controllers.Users
@@ -85,11 +86,7 @@ namespace TokenService.Controllers.Users
 
         private void HandlePasswordResetResponse(EditUserModel model, IdentityResult result)
         {
-            if (!result.Succeeded)
-            {
-                ShowPasswordErrors(result.Errors);
-            }
-            else
+            if (ModelState.CheckResult(result))
             {
                 PreventNewPasswordFromReturningToClient(model);
             }
@@ -112,6 +109,20 @@ namespace TokenService.Controllers.Users
             model.PasswordVerification ??= "";
             if (model.Password.Equals(model.PasswordVerification, StringComparison.Ordinal)) return true;
             ModelState.AddModelError("Password", "Password and Verification must be the same");
+            return false;
+        }
+    }
+
+    public static class ModelStateDictionaryExtensions
+    {
+        public static bool CheckResult(this ModelStateDictionary dict, IdentityResult result)
+        {
+            if (result.Succeeded) return true;
+            foreach (var error in result.Errors)
+            {
+                dict.AddModelError("", error.Description);
+            }
+
             return false;
         }
     }

@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -389,17 +388,10 @@ namespace IdentityServer4.Quickstart.UI
         }
 
         private string PasswordResetUrl(string email, string resetToken) =>
-            $"{WebsiteRootUrl()}/User/PickPassword/Reset?user={HttpUtility.UrlEncode(email)}" +
+            $"{WebsiteRootUrl()}/PickPassword/Reset?user={HttpUtility.UrlEncode(email)}" +
             $"&token={HttpUtility.UrlEncode(resetToken)}";
 
         private string WebsiteRootUrl() =>
             $"{Request.Scheme}://{Request.Host}{this.Request.PathBase}";
-    }
-
-    public class ForgotPasswordModel
-    {
-        [EmailAddress]
-        public string EmailAddress { get; set; } = "";
-
     }
 }

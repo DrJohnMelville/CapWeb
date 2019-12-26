@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Web;
 using IdentityModel;
 using TokenService.Controllers.Users;
 using Xunit;
@@ -25,6 +26,13 @@ namespace TokenServiceTest.Controllers.Users
             Assert.Null(sut.PasswordVerification);
             Assert.Equal("email", sut.Email);
             Assert.Equal("Name", sut.FullName);
+            
+        }
+
+        [Fact]
+        public void HttpUrlEncodeTest()
+        {
+            Assert.Equal("A+B", HttpUtility.UrlDecode(HttpUtility.UrlEncode("A+B")));
             
         }
     }
