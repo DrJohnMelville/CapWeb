@@ -28,7 +28,6 @@ namespace IdentityServer4.Quickstart.UI
             _environment = environment;
             _logger = logger;
 
-            email.SendEmail("Santa@NorthPole.Org", "Naughty List", "Not Logged");
         }
 
         public IActionResult Index()
