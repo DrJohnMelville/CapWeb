@@ -1,0 +1,23 @@
+﻿@model TokenService.Controllers.Admin.AdminModel
+
+@{
+    ViewBag.Title = "Administrator console";
+    Layout = "_Layout";
+}
+
+<h2>Administrative Console</h2>
+
+<div>
+    <a href="Admin/NewUser">Create a new user.</a>
+</div>
+
+<h3>Existing Users:</h3>
+
+<div>
+    <ul>
+        @foreach (var user in Model.Users)
+        {
+            <li><a href="#">@user.UserName</a></li>
+        }
+    </ul>
+</div>

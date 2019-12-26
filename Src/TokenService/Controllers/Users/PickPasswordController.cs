@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Authorization;
@@ -59,29 +58,6 @@ namespace TokenService.Controllers.Users
             ModelState.AddModelError("Password", "Password and Verification must be the same");
             return false;
         }
-
-    }
-
-    public class PickPasswordModel
-    {
-        public PickPasswordModel()
-        {
-        }
-
-        public PickPasswordModel(string encodedUser, string encodedToken)
-        {
-            User = encodedUser;
-            PermissionHash = encodedToken;
-        }
-
-        public string Explanation { get; set; } = "";
-        public string Title { get; set; } = "";
-        public string User { get; set; } = "";
-        public string PermissionHash { get; set; } = "";
-        public string Password { get; set; } = "";
-        public string ButtonText { get; set; } = "Reset Password";
-        [Compare("Password")]
-        public string PasswordVerification { get; set; } = "";
 
     }
 }

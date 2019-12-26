@@ -11,13 +11,11 @@ using IdentityServer4.Stores;
 using TokenService.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -29,13 +27,13 @@ namespace IdentityServer4.Quickstart.UI
     [AllowAnonymous]
     public class AccountController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IIdentityServerInteractionService _interaction;
-        private readonly IClientStore _clientStore;
-        private readonly IAuthenticationSchemeProvider _schemeProvider;
-        private readonly IEventService _events;
-        private readonly ISendEmailService _emailSender;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly IIdentityServerInteractionService interaction;
+        private readonly IClientStore clientStore;
+        private readonly IAuthenticationSchemeProvider schemeProvider;
+        private readonly IEventService events;
+        private readonly IPasswordResetNotificationSender emailSender;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -43,15 +41,15 @@ namespace IdentityServer4.Quickstart.UI
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
-            IEventService events, ISendEmailService emailSender)
+            IEventService events, IPasswordResetNotificationSender emailSender)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _interaction = interaction;
-            _clientStore = clientStore;
-            _schemeProvider = schemeProvider;
-            _events = events;
-            _emailSender = emailSender;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
+            this.interaction = interaction;
+            this.clientStore = clientStore;
+            this.schemeProvider = schemeProvider;
+            this.events = events;
+            this.emailSender = emailSender;
         }
 
         /// <summary>
@@ -80,7 +78,7 @@ namespace IdentityServer4.Quickstart.UI
         public async Task<IActionResult> Login(LoginInputModel model, string button)
         {
             // check if we are in the context of an authorization request
-            var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+            var context = await interaction.GetAuthorizationContextAsync(model.ReturnUrl);
 
             // the user clicked the "cancel" button
             if (button != "login")
@@ -90,10 +88,10 @@ namespace IdentityServer4.Quickstart.UI
                     // if the user cancels, send a result back into IdentityServer as if they 
                     // denied the consent (even if this client does not require consent).
                     // this will send back an access denied OIDC error response to the client.
-                    await _interaction.GrantConsentAsync(context, ConsentResponse.Denied);
+                    await interaction.GrantConsentAsync(context, ConsentResponse.Denied);
 
                     // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                    if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                    if (await clientStore.IsPkceClientAsync(context.ClientId))
                     {
                         // if the client is PKCE then we assume it's native, so this change in how to
                         // return the response is for better UX for the end user.
@@ -111,15 +109,15 @@ namespace IdentityServer4.Quickstart.UI
 
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberLogin, lockoutOnFailure: true);
+                var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberLogin, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
-                    var user = await _userManager.FindByNameAsync(model.Username);
-                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.ClientId));
+                    var user = await userManager.FindByNameAsync(model.Username);
+                    await events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.ClientId));
 
                     if (context != null)
                     {
-                        if (await _clientStore.IsPkceClientAsync(context.ClientId))
+                        if (await clientStore.IsPkceClientAsync(context.ClientId))
                         {
                             // if the client is PKCE then we assume it's native, so this change in how to
                             // return the response is for better UX for the end user.
@@ -146,7 +144,7 @@ namespace IdentityServer4.Quickstart.UI
                     }
                 }
 
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId:context?.ClientId));
+                await events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId:context?.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
@@ -188,10 +186,10 @@ namespace IdentityServer4.Quickstart.UI
             if (User?.Identity.IsAuthenticated == true)
             {
                 // delete local authentication cookie
-                await _signInManager.SignOutAsync();
+                await signInManager.SignOutAsync();
 
                 // raise the logout event
-                await _events.RaiseAsync(new UserLogoutSuccessEvent(User.GetSubjectId(), User.GetDisplayName()));
+                await events.RaiseAsync(new UserLogoutSuccessEvent(User.GetSubjectId(), User.GetDisplayName()));
             }
 
             // check if we need to trigger sign-out at an upstream identity provider
@@ -221,8 +219,8 @@ namespace IdentityServer4.Quickstart.UI
         /*****************************************/
         private async Task<LoginViewModel> BuildLoginViewModelAsync(string? returnUrl)
         {
-            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-            if (context?.IdP is { } currentIdp && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
+            var context = await interaction.GetAuthorizationContextAsync(returnUrl);
+            if (context?.IdP is { } currentIdp && await schemeProvider.GetSchemeAsync(context.IdP) != null)
             {
                 var local = currentIdp == IdentityServer4.IdentityServerConstants.LocalIdentityProvider;
 
@@ -242,7 +240,7 @@ namespace IdentityServer4.Quickstart.UI
                 return vm;
             }
 
-            var schemes = await _schemeProvider.GetAllSchemesAsync();
+            var schemes = await schemeProvider.GetAllSchemesAsync();
 
             var providers = schemes
                 .Where(x => x.DisplayName != null ||
@@ -257,7 +255,7 @@ namespace IdentityServer4.Quickstart.UI
             var allowLocal = true;
             if (context?.ClientId != null)
             {
-                var client = await _clientStore.FindEnabledClientByIdAsync(context.ClientId);
+                var client = await clientStore.FindEnabledClientByIdAsync(context.ClientId);
                 if (client != null)
                 {
                     allowLocal = client.EnableLocalLogin;
@@ -298,7 +296,7 @@ namespace IdentityServer4.Quickstart.UI
                 return vm;
             }
 
-            var context = await _interaction.GetLogoutContextAsync(logoutId);
+            var context = await interaction.GetLogoutContextAsync(logoutId);
             if (context?.ShowSignoutPrompt == false)
             {
                 // it's safe to automatically sign-out
@@ -314,7 +312,7 @@ namespace IdentityServer4.Quickstart.UI
         private async Task<LoggedOutViewModel> BuildLoggedOutViewModelAsync(string? logoutId)
         {
             // get context information (client name, post logout redirect URI and iframe for federated signout)
-            var logout = await _interaction.GetLogoutContextAsync(logoutId);
+            var logout = await interaction.GetLogoutContextAsync(logoutId);
 
             var vm = new LoggedOutViewModel
             {
@@ -338,7 +336,7 @@ namespace IdentityServer4.Quickstart.UI
                             // if there's no current logout context, we need to create one
                             // this captures necessary info from the current logged in user
                             // before we signout and redirect away to the external IdP for signout
-                            vm.LogoutId = await _interaction.CreateLogoutContextAsync();
+                            vm.LogoutId = await interaction.CreateLogoutContextAsync();
                         }
 
                         vm.ExternalAuthenticationScheme = idp;
@@ -361,37 +359,21 @@ namespace IdentityServer4.Quickstart.UI
         public async Task<ActionResult> ForgotPassword(ForgotPasswordModel model)
         {
             if (!ModelState.IsValid) return View(model);
-            if ((await CreateResetMessage(model.EmailAddress)) is {} resetMessage)
-            {
-                await _emailSender.SendEmail(model.EmailAddress, "Reset your password on CapWeb",
-                    resetMessage);
-            }
+            
+            await emailSender.SendPasswordResetEmail(await userManager.FindByNameAsync(model.EmailAddress),
+                "Reset your password on CapWeb", CreateResetMessage);
             return View("ResetEmailSent", model);
         }
 
-        private async Task<string?> CreateResetMessage(string email)
+        private string CreateResetMessage(string email, string resetTokenAsHtmlParagraphString)
         {
-            var user = await _userManager.FindByNameAsync(email);
-            if (user == null) return null;
             return $"<p>CapWeb has received a password reset request for {email}.  If you have requested a " +
                    "password reset, please click the reset link below.</p> " +
-                   ResetTokenAsHtmlParagraphString(PasswordResetUrl(email, await _userManager.GeneratePasswordResetTokenAsync(user))) +
+                   resetTokenAsHtmlParagraphString +
                    "If you did not request this reset, no action is necessary, as the token in this email would be" +
                    "required to change your password.  (If the person trying to change your password can also read " +
                    "your emails, then you have bigger problems.)  If you have questions, please send and email to " +
                    "<a href='mailto:johnmelville@gmail.com'>John Melville.</a></p>";
         }
-
-        private static string ResetTokenAsHtmlParagraphString(string resrtUrl)
-        {
-            return $"<p><a href='{resrtUrl}'>{HttpUtility.HtmlEncode(resrtUrl)}</a></p> ";
-        }
-
-        private string PasswordResetUrl(string email, string resetToken) =>
-            $"{WebsiteRootUrl()}/PickPassword/Reset?user={HttpUtility.UrlEncode(email)}" +
-            $"&token={HttpUtility.UrlEncode(resetToken)}";
-
-        private string WebsiteRootUrl() =>
-            $"{Request.Scheme}://{Request.Host}{this.Request.PathBase}";
     }
 }

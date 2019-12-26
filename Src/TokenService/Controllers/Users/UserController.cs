@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -94,14 +93,6 @@ namespace TokenService.Controllers.Users
 
         private static void PreventNewPasswordFromReturningToClient(EditUserModel model) => 
             model.Password = model.PasswordVerification = "";
-
-        private void ShowPasswordErrors(IEnumerable<IdentityError> errors)
-        {
-            foreach (var error in errors)
-            {
-                ModelState.AddModelError("Password", error.Description);
-            }
-        }
 
         private bool CheckPasswordsSame(EditUserModel model)
         {
