@@ -14,8 +14,6 @@ namespace TokenService.Services.EmailServices
   }
   public sealed class SendEmailService:ISendEmailService
   {
-    private readonly IConfiguration configuration;
-
     // config Data
     public string SourceAccount { get; set; } = "";
     public string SmtpServer { get; set; } = "";

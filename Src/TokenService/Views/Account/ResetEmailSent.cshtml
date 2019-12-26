@@ -1,0 +1,27 @@
+﻿@model ForgotPasswordModel
+
+@{
+    ViewBag.Title = "Password Reset Request Received";
+    Layout = "_Layout";
+}
+
+<div class="col-sm-6" xmlns="http://www.w3.org/1999/html">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Reset Forgotten Password</h3>
+        </div>
+
+        <partial name="_ValidationSummary" />
+
+        <div class="panel-body">
+            <p>CapWeb has received your request to reset the password for @(Model.EmailAddress).  For security
+                reasons, this website cannot confirm that @(Model.EmailAddress) is registered with this site.  If
+                @(Model.EmailAddress) is a valid address, an email has been sent with password reset instructions.</p>
+            
+            <p>If you do not receive an email in the next several minutes with password reset instructions, please
+                check your junk mail folder.  If you are confident that you did not receive a password reset email,
+                please email <a href="mailto:johnmelville@gmail.com">John Melville</a> for further assistance 
+                recovering your account.</p>
+        </div>
+    </div>
+</div>

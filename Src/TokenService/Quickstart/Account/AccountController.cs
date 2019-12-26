@@ -15,8 +15,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using TokenService.Services.EmailServices;
 
 namespace IdentityServer4.Quickstart.UI
 {
@@ -30,6 +36,7 @@ namespace IdentityServer4.Quickstart.UI
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
+        private readonly ISendEmailService _emailSender;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -37,7 +44,7 @@ namespace IdentityServer4.Quickstart.UI
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
-            IEventService events)
+            IEventService events, ISendEmailService emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -45,6 +52,7 @@ namespace IdentityServer4.Quickstart.UI
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
+            _emailSender = emailSender;
         }
 
         /// <summary>
@@ -341,5 +349,57 @@ namespace IdentityServer4.Quickstart.UI
 
             return vm;
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult ForgotPassword()
+        {
+            return View(new ForgotPasswordModel());
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+            if ((await CreateResetMessage(model.EmailAddress)) is {} resetMessage)
+            {
+                await _emailSender.SendEmail(model.EmailAddress, "Reset your password on CapWeb",
+                    resetMessage);
+            }
+            return View("ResetEmailSent", model);
+        }
+
+        private async Task<string?> CreateResetMessage(string email)
+        {
+            var user = await _userManager.FindByNameAsync(email);
+            if (user == null) return null;
+            return $"<p>CapWeb has received a password reset request for {email}.  If you have requested a " +
+                   "password reset, please click the reset link below.</p> " +
+                   ResetTokenAsHtmlParagraphString(PasswordResetUrl(email, await _userManager.GeneratePasswordResetTokenAsync(user))) +
+                   "If you did not request this reset, no action is necessary, as the token in this email would be" +
+                   "required to change your password.  (If the person trying to change your password can also read " +
+                   "your emails, then you have bigger problems.)  If you have questions, please send and email to " +
+                   "<a href='mailto:johnmelville@gmail.com'>John Melville.</a></p>";
+        }
+
+        private static string ResetTokenAsHtmlParagraphString(string resrtUrl)
+        {
+            return $"<p><a href='{resrtUrl}'>{HttpUtility.HtmlEncode(resrtUrl)}</a></p> ";
+        }
+
+        private string PasswordResetUrl(string email, string resetToken) =>
+            $"{WebsiteRootUrl()}/User/PickPassword/Reset?user={HttpUtility.UrlEncode(email)}" +
+            $"&token={HttpUtility.UrlEncode(resetToken)}";
+
+        private string WebsiteRootUrl() =>
+            $"{Request.Scheme}://{Request.Host}{this.Request.PathBase}";
+    }
+
+    public class ForgotPasswordModel
+    {
+        [EmailAddress]
+        public string EmailAddress { get; set; } = "";
+
     }
 }

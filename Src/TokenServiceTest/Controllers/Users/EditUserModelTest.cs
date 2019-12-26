@@ -5,6 +5,10 @@ using Xunit;
 
 namespace TokenServiceTest.Controllers.Users
 {
+    public class PickPasswordControllerTest
+    {
+        
+    }
     public class EditUserModelTest
     {
         [Fact]
