@@ -1,0 +1,60 @@
+﻿@model TokenService.Data.ClientData.ClientSite
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ClientSite</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FriendlyName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FriendlyName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ClientSecret)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ClientSecret)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.BaseUri)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.BaseUri)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RedirectExtenstions)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RedirectExtenstions)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FrontChannelLogoutExtension)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FrontChannelLogoutExtension)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.PostLogoutRedirectExtensions)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PostLogoutRedirectExtensions)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.AllowedScopes)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AllowedScopes)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ShortName">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

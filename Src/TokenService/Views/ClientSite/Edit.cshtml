@@ -1,0 +1,64 @@
+﻿@model TokenService.Data.ClientData.ClientSite
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit</h2>
+
+<h4>ClientSite</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FriendlyName" class="control-label"></label>
+                <input asp-for="FriendlyName" class="form-control" />
+                <span asp-validation-for="FriendlyName" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="ShortName" />
+            <div class="form-group">
+                <label asp-for="ClientSecret" class="control-label"></label>
+                <input asp-for="ClientSecret" class="form-control" />
+                <span asp-validation-for="ClientSecret" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BaseUri" class="control-label"></label>
+                <input asp-for="BaseUri" class="form-control" />
+                <span asp-validation-for="BaseUri" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RedirectExtenstions" class="control-label"></label>
+                <input asp-for="RedirectExtenstions" class="form-control" />
+                <span asp-validation-for="RedirectExtenstions" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FrontChannelLogoutExtension" class="control-label"></label>
+                <input asp-for="FrontChannelLogoutExtension" class="form-control" />
+                <span asp-validation-for="FrontChannelLogoutExtension" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PostLogoutRedirectExtensions" class="control-label"></label>
+                <input asp-for="PostLogoutRedirectExtensions" class="form-control" />
+                <span asp-validation-for="PostLogoutRedirectExtensions" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AllowedScopes" class="control-label"></label>
+                <input asp-for="AllowedScopes" class="form-control" />
+                <span asp-validation-for="AllowedScopes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

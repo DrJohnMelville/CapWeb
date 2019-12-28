@@ -46,8 +46,10 @@ namespace TokenService.Data.ClientData
         private ICollection<string> BuildScopes()
         {
             var ret = new HashSet<string>();
-            ret.Add("openid");
-            ret.Add("profile");
+            foreach (var scope in AllowedScopes.Split('|'))
+            {
+                ret.Add(scope);
+            }
             ret.Add("apiCapp");
             return ret;
         }
