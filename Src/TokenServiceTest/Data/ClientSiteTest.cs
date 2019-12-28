@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using IdentityModel;
 using IdentityServer4.Models;
 using TokenService.Data.ClientData;
 using Xunit;
@@ -67,9 +66,8 @@ namespace TokenServiceTest.Data
         public void MultipleRedirectExtensions()
         {
             sut.RedirectExtenstions = "ex1|ex2/ex3";
-            Assert.Equal(new []{"https://www.Capp.Example.Com/ex1","https://www.Capp.Example.Com/ex2/ex3"}, 
+            Assert.Equal(new[] {"https://www.Capp.Example.Com/ex1", "https://www.Capp.Example.Com/ex2/ex3"},
                 sut.Clients()[0].RedirectUris);
-            
         }
     }
 }
