@@ -18,7 +18,7 @@ namespace TokenServiceTest.Data
         [Fact]
         public void ApiResourceTest()
         {
-            var res = sut.ApiResource();
+            var res = sut.ApiResource().First();
             Assert.Equal("apiCApp", res.Name);
             Assert.Equal("ClientApplication", res.DisplayName);
         }

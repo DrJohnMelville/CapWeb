@@ -7,6 +7,7 @@ using IdentityServer4.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using TokenService.Configuration.IdentityServer;
 using TokenService.Data;
 using TokenService.Data.ClientData;
 
@@ -15,10 +16,12 @@ namespace TokenService.Controllers.ClientSites
     public class ClientSiteController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEnumerable<IInvalidateClients> invalidateClients;
 
-        public ClientSiteController(ApplicationDbContext context)
+        public ClientSiteController(ApplicationDbContext context, IEnumerable<IInvalidateClients> invalidateClients)
         {
             _context = context;
+            this.invalidateClients = invalidateClients;
         }
 
         // GET: ClientSite
@@ -62,6 +65,7 @@ namespace TokenService.Controllers.ClientSites
             {
                 _context.Add(clientSite);
                 await _context.SaveChangesAsync();
+                invalidateClients.Invalidate();
                 return RedirectToAction(nameof(Index));
             }
             return View(clientSite);
@@ -113,6 +117,7 @@ namespace TokenService.Controllers.ClientSites
                         throw;
                     }
                 }
+                invalidateClients.Invalidate();
                 return RedirectToAction(nameof(Index));
             }
             return View(clientSite);
@@ -144,6 +149,7 @@ namespace TokenService.Controllers.ClientSites
             var clientSite = await _context.ClientSites.FindAsync(id);
             _context.ClientSites.Remove(clientSite);
             await _context.SaveChangesAsync();
+            invalidateClients.Invalidate();
             return RedirectToAction(nameof(Index));
         }
 

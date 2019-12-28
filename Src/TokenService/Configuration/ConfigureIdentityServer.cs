@@ -1,4 +1,5 @@
-﻿using IdentityServer4.Stores;
+﻿using System.Collections.Generic;
+using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using TokenService.Configuration.IdentityServer;
@@ -17,11 +18,17 @@ namespace TokenService.Configuration
                     options.Events.RaiseFailureEvents = true;
                     options.Events.RaiseSuccessEvents = true;
                 })
-                .AddInMemoryIdentityResources(Config.Ids)
-                .AddInMemoryApiResources(Config.Apis)
-                .AddInMemoryClients(Config.Clients)
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddPersistedGrantStore<PersistentGrantsStore>();
+
+            services.AddSingleton<IClientStore, ClientStore>();
+            services.AddSingleton<IResourceStore, ResourceStore>();
+            services.AddSingleton<IEnumerable<IInvalidateClients>>(d =>
+                new[]
+                {
+                    (IInvalidateClients) d.GetService<IClientStore>(),
+                    (IInvalidateClients) d.GetService<IResourceStore>(),
+                });
 
             RegisterSigningTokenServer(services);
         }

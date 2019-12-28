@@ -17,9 +17,9 @@ namespace TokenService.Data.ClientData
         public string PostLogoutRedirectExtensions { get; set; } = "signout-callback-oidc";
         public string AllowedScopes { get; set; } = "openid|profile";
 
-        public ApiResource ApiResource()
+        public IEnumerable<ApiResource> ApiResource()
         {
-            return new ApiResource($"api{ShortName}", FriendlyName);
+            return new []{new ApiResource($"api{ShortName}", FriendlyName)};
         }
 
         public Client[] Clients()
