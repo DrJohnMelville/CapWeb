@@ -52,6 +52,58 @@
         <dd>
             @Html.DisplayFor(model => model.AllowedScopes)
         </dd>
+        <dt>Api Resources</dt>
+        <dd>
+            <table>
+                <tr><th>Name</th><th>Display Name</th></tr>
+                @foreach (var resource in @Model.ApiResource())
+                {
+                    <tr><td>@resource.Name</td><td>@resource.DisplayName</td></tr>
+                }
+            </table>
+        </dd>
+        <dt>Clients</dt>
+        <dd>
+            @foreach (var client in @Model.Clients())
+            {
+                <h4>@client.ClientId</h4>
+                <dl class="dl-horizontal">
+                    <dt>Client Id</dt>
+                    <dd>@client.ClientId</dd>
+                    <dt>Allowed Grant Types</dt>
+                                <dd> <ul>
+                                    @foreach (var grantType in client.AllowedGrantTypes)
+                                    {
+                                        <li>@grantType</li>
+                                    }
+                                </ul></dd>
+        <dt>Redirects</dt>
+                    <dd> <ul>
+                        @foreach (var redirect in client.RedirectUris)
+                        {
+                            <li>@redirect</li>
+                        }
+                    </ul></dd>
+                    <dt>Front Channel Logout</dt>
+                    <dd>@client.FrontChannelLogoutUri</dd>
+        <dt>Post Logout Redirects</dt>
+                           <dd> <ul>
+                               @foreach (var redirect in client.PostLogoutRedirectUris)
+                               {
+                                   <li>@redirect</li>
+                               }
+                           </ul></dd>
+        <dt>Allowed Scopes</dt>
+                           <dd> <ul>
+                               @foreach (var scope in client.AllowedScopes)
+                               {
+                                   <li>@scope</li>
+                               }
+                           </ul></dd>
+                                            
+                </dl>                
+            }
+        </dd>
     </dl>
 </div>
 <div>

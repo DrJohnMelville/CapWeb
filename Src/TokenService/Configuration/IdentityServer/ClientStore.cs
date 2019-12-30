@@ -44,7 +44,8 @@ namespace TokenService.Configuration.IdentityServer
                 await UpdateList();
             }
 
-            return await innerStore.FindClientByIdAsync(clientId);
+            var findClientByIdAsync = clients.FirstOrDefault(i => i.ClientId.Equals(clientId, StringComparison.Ordinal));
+            return findClientByIdAsync;
         }
 
         public void Invalidate()

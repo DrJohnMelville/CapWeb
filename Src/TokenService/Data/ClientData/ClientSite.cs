@@ -35,6 +35,8 @@ namespace TokenService.Data.ClientData
                 ClientName = FriendlyName,
                 AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                 ClientSecrets = new[]{new Secret(ClientSecret.Sha256())},
+                RequireConsent = false,
+                RequirePkce = true,
                 RequireClientSecret = true,
                 RedirectUris = ExpandUriExtensions(RedirectExtenstions),
                 FrontChannelLogoutUri = ExpandUriExtension(FrontChannelLogoutExtension),
@@ -50,7 +52,11 @@ namespace TokenService.Data.ClientData
             {
                 ret.Add(scope);
             }
-            ret.Add("apiCapp");
+
+            foreach (var api in ApiResource())
+            {
+                ret.Add(api.Name);
+            }
             return ret;
         }
 
