@@ -28,13 +28,11 @@ namespace TokenService.Configuration.IdentityServer
     {
         private List<Client> clients = new List<Client>();
         private bool valid;
-        private readonly InMemoryClientStore innerStore;
         private readonly Func<ApplicationDbContext> databaseFactory;
 
         public ClientStore(Func<ApplicationDbContext> databaseFactory)
         {
             this.databaseFactory = databaseFactory;
-            innerStore = new InMemoryClientStore(clients);
         }
 
         public async Task<Client> FindClientByIdAsync(string clientId)

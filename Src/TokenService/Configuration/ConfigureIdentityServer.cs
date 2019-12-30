@@ -1,4 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using IdentityServer4.Models;
+using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +11,21 @@ using TokenService.Models;
 
 namespace TokenService.Configuration
 {
+    public class ProfileStore:IProfileService
+    {
+        public Task GetProfileDataAsync(ProfileDataRequestContext context)
+        {
+            context.AddRequestedClaims(context.Subject.Claims);
+            return Task.CompletedTask;
+        }
+
+        public Task IsActiveAsync(IsActiveContext context)
+        {
+            context.IsActive = true;
+            return Task.CompletedTask;
+        }
+    }
+
     public static class ConfigureIdentityServer
     {
         public static void AddTokenServer(this IServiceCollection services)
@@ -21,6 +40,7 @@ namespace TokenService.Configuration
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddPersistedGrantStore<PersistentGrantsStore>();
 
+            services.AddSingleton<IProfileService, ProfileStore>();
             services.AddSingleton<IClientStore, ClientStore>();
             services.AddSingleton<IResourceStore, ResourceStore>();
             services.AddSingleton<IEnumerable<IInvalidateClients>>(d =>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using IdentityModel;
 using IdentityServer4.Models;
 
 namespace TokenService.Data.ClientData
@@ -35,6 +36,7 @@ namespace TokenService.Data.ClientData
                 ClientName = FriendlyName,
                 AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                 ClientSecrets = new[]{new Secret(ClientSecret.Sha256())},
+                AlwaysIncludeUserClaimsInIdToken = true,
                 RequireConsent = false,
                 RequirePkce = true,
                 RequireClientSecret = true,
@@ -48,15 +50,15 @@ namespace TokenService.Data.ClientData
         private ICollection<string> BuildScopes()
         {
             var ret = new HashSet<string>();
-            foreach (var scope in AllowedScopes.Split('|'))
-            {
-                ret.Add(scope);
-            }
+                foreach (var scope in AllowedScopes.Split('|'))
+                {
+                    ret.Add(scope);
+                }
 
-            foreach (var api in ApiResource())
-            {
-                ret.Add(api.Name);
-            }
+                foreach (var api in ApiResource())
+                {
+                    ret.Add(api.Name);
+                }
             return ret;
         }
 
@@ -74,6 +76,7 @@ namespace TokenService.Data.ClientData
                 ClientId = $"app{ShortName}",
                 ClientName = FriendlyName,
                 ClientUri = BaseUri,
+                AlwaysIncludeUserClaimsInIdToken = true,
                 AllowedGrantTypes = GrantTypes.Code,
                 ClientSecrets = new[]{new Secret(ClientSecret.Sha256())},
                 RequirePkce = true,

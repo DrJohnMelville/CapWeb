@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ namespace TokenService.Configuration.IdentityServer
         private readonly List<IdentityResource> identityResources = new List<IdentityResource>()
         {
             new IdentityResources.OpenId(),
-            new IdentityResources.Profile()
+            new IdentityResource("profile", new []{JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Role})
         };
         private readonly List<ApiResource> apiResources = new List<ApiResource>();
         private readonly Func<ApplicationDbContext> dbFactory;
