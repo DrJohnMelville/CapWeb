@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using IdentityModel;
 using IdentityServer4.Models;
+using TokenService.Data.UserPriviliges;
 
 namespace TokenService.Data.ClientData
 {
@@ -17,6 +18,7 @@ namespace TokenService.Data.ClientData
         public string FrontChannelLogoutExtension { get; set; } = "signout-oidc";
         public string PostLogoutRedirectExtensions { get; set; } = "signout-callback-oidc";
         public string AllowedScopes { get; set; } = "openid|profile";
+        public IList<UserPrivilege> UserPrivileges { get; set; } = Array.Empty<UserPrivilege>();
 
         public IEnumerable<ApiResource> ApiResource()
         {

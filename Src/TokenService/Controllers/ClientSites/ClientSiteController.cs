@@ -63,6 +63,7 @@ namespace TokenService.Controllers.ClientSites
         {
             if (ModelState.IsValid)
             {
+                clientSite.ShortName = clientSite.ShortName.Trim();
                 _context.Add(clientSite);
                 await _context.SaveChangesAsync();
                 invalidateClients.Invalidate();
