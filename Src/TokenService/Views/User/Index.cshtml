@@ -60,11 +60,11 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <table>
+                    <table >
                         <tr><th>Site</th><th>Access</th></tr>
                         @foreach (var site in Model.Privileges)
                         {
-                            <tr><td>@(site.SiteId)</td><td>@(site.Privilege)</td></tr>
+                            <tr><td>@(site.Site)</td><td>@(site.Privilege)</td></tr>
                         }
                     </table>
                 </div>

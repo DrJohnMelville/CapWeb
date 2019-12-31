@@ -15,7 +15,7 @@ namespace TokenService.Configuration
     {
         public static void AddTokenServer(this IServiceCollection services)
         {
-            var builder = services.AddIdentityServer(options =>
+            services.AddIdentityServer(options =>
                 {
                     options.Events.RaiseErrorEvents = true;
                     options.Events.RaiseInformationEvents = true;

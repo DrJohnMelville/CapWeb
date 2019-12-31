@@ -18,7 +18,7 @@ namespace TokenService.Controllers.Users
         [Compare(nameof(Password))]
         public string? PasswordVerification { get; set; }
         public string? CurrentPassword { get; set; }
-        public IEnumerable<UserPrivilege> Privileges { get; set; } = Array.Empty<UserPrivilege>();
+        public IEnumerable<WebsiteMembership> Privileges { get; set; } = Array.Empty<WebsiteMembership>();
 
         public EditUserModel()
         {
@@ -28,6 +28,18 @@ namespace TokenService.Controllers.Users
         {
             Email = source.ClaimByName(JwtClaimTypes.Email);
             FullName = source.ClaimByName(JwtClaimTypes.Name);
+        }
+    }
+
+    public class WebsiteMembership
+    {
+        public string Site { get; }
+        public SitePrivilege Privilege { get; }
+
+        public WebsiteMembership(string site, SitePrivilege privilege)
+        {
+            Site = site;
+            Privilege = privilege;
         }
     }
     

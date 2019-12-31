@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
 using IdentityServer4.Quickstart.UI;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ using TokenService.Models;
 
 namespace TokenService.Controllers.Admin
 {
+    [Authorize(Policy = "Administrator")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext db;
@@ -116,7 +118,25 @@ namespace TokenService.Controllers.Admin
             claims.FirstOrDefault(i=>i.Type == claimType)?.Value??"";
 
         [HttpPost]
-        public async Task<IActionResult> EditUser(EditUserModel model)
+        public Task<IActionResult> EditUser(EditUserModel model, string button)
+        {
+            switch (button)
+            {
+                case "Update": return UpdateUser(model);
+                case "Delete": return Task.FromResult((IActionResult)View("DeleteConfirm", model));
+                case "NoDelete": return Task.FromResult((IActionResult)View(model));
+                case "YesDelete": return DeleteUser(model);
+            }
+            throw new InvalidOperationException("Invalid Button");
+        }
+
+        private async Task<IActionResult> DeleteUser(EditUserModel model)
+        {
+            await userManager.DeleteAsync(await userManager.FindByIdAsync(model.Id));
+            return Redirect("/");
+        }
+
+        private async Task<IActionResult> UpdateUser(EditUserModel model)
         {
             if (!ModelState.IsValid) return View(model);
             var user = await userManager.FindByIdAsync(model.Id);
@@ -128,7 +148,8 @@ namespace TokenService.Controllers.Admin
                 db.UserPrivileges.Remove(claim);
             }
 
-            foreach (var newClaim in model.Sites.Where(i=>i.Privilege == SitePrivilege.Administrator || i.Privilege == SitePrivilege.User))
+            foreach (var newClaim in model.Sites.Where(i =>
+                i.Privilege == SitePrivilege.Administrator || i.Privilege == SitePrivilege.User))
             {
                 db.UserPrivileges.Add(new UserPrivilege()
                     {SiteId = newClaim.PrivateName, UserId = model.Id, Privilege = newClaim.Privilege});

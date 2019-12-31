@@ -44,6 +44,9 @@ namespace TokenService
             services.AddTransient<IPasswordResetNotificationSender, PasswordResetNotificationSender>();
             services.AddTokenServer();
 
+            services.AddAuthorization(options => options.AddPolicy("Administrator",
+                pb => pb.RequireClaim("email", "johnmelville@gmail.com")));
+
             // services.AddAuthentication()
             //     .AddGoogle(options =>
             //     {

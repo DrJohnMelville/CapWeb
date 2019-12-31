@@ -1,0 +1,42 @@
+﻿@using System.Security.Policy
+@using TokenService.Data.UserPriviliges
+@model TokenService.Controllers.Admin.EditUserModel
+
+@{
+    ViewBag.Title = "Delete User";
+    Layout = "_Layout";
+}
+
+<div class="col-sm-6">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Delete User</h3>
+        </div>
+
+        <partial name="_ValidationSummary" />
+
+        <div class="panel-body">
+
+            <form method="post">
+                <fieldset>
+                    <input type="hidden" asp-for="Id"/>
+                    <input type="hidden" asp-for="FullName"/>
+                    <input type="hidden" asp-for="Email"/>
+                    @for (int i = 0; i < Model.Sites.Length; i++)
+                    {
+
+                             <input type="hidden" asp-for="Sites[i].DisplayName"/>
+                            <input type="hidden" asp-for="Sites[i].PrivateName"/>
+                            <input type="hidden" asp-for="Sites[i].Privilege"/>
+                    }
+                    <p>Are sure you want to delete user @Model.FullName (@Model.Email)</p>
+                    <div class="form-group">
+                        <button class="btn btn-primary" name="button" value="YesDelete">Yes</button>
+                        <button class="btn btn-primary" name="button" value="NoDelete">No</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    <a href="/Admin">Return to Administrator Page</a>
+</div>
