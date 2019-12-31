@@ -207,25 +207,24 @@ namespace TokenService.Migrations
                 name: "UserPrivileges",
                 columns: table => new
                 {
-                    SiteId = table.Column<int>(nullable: false),
-                    ApplicationUserId = table.Column<string>(nullable: false),
-                    SiteShortName = table.Column<string>(nullable: false),
+                    SiteId = table.Column<string>(nullable: false),
+                    UserId = table.Column<string>(nullable: false),
                     Privilege = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserPrivileges", x => new { x.SiteId, x.ApplicationUserId });
+                    table.PrimaryKey("PK_UserPrivileges", x => new { x.SiteId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_UserPrivileges_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserPrivileges_ClientSites_SiteShortName",
-                        column: x => x.SiteShortName,
+                        name: "FK_UserPrivileges_ClientSites_SiteId",
+                        column: x => x.SiteId,
                         principalTable: "ClientSites",
                         principalColumn: "ShortName",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserPrivileges_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -267,14 +266,9 @@ namespace TokenService.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserPrivileges_ApplicationUserId",
+                name: "IX_UserPrivileges_UserId",
                 table: "UserPrivileges",
-                column: "ApplicationUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserPrivileges_SiteShortName",
-                table: "UserPrivileges",
-                column: "SiteShortName");
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -307,10 +301,10 @@ namespace TokenService.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "ClientSites");
 
             migrationBuilder.DropTable(
-                name: "ClientSites");
+                name: "AspNetUsers");
         }
     }
 }

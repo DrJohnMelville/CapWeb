@@ -241,24 +241,18 @@ namespace TokenService.Migrations
 
             modelBuilder.Entity("TokenService.Data.UserPriviliges.UserPrivilege", b =>
                 {
-                    b.Property<int>("SiteId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("SiteId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<string>("ApplicationUserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Privilege")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SiteShortName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.HasKey("SiteId", "UserId");
 
-                    b.HasKey("SiteId", "ApplicationUserId");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("SiteShortName");
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserPrivileges");
                 });
@@ -380,15 +374,15 @@ namespace TokenService.Migrations
 
             modelBuilder.Entity("TokenService.Data.UserPriviliges.UserPrivilege", b =>
                 {
-                    b.HasOne("TokenService.Models.ApplicationUser", "User")
+                    b.HasOne("TokenService.Data.ClientData.ClientSite", "Site")
                         .WithMany("UserPrivileges")
-                        .HasForeignKey("ApplicationUserId")
+                        .HasForeignKey("SiteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TokenService.Data.ClientData.ClientSite", "Site")
+                    b.HasOne("TokenService.Models.ApplicationUser", "User")
                         .WithMany("UserPrivileges")
-                        .HasForeignKey("SiteShortName")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

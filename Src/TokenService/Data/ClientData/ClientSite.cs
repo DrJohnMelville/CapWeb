@@ -18,7 +18,7 @@ namespace TokenService.Data.ClientData
         public string FrontChannelLogoutExtension { get; set; } = "signout-oidc";
         public string PostLogoutRedirectExtensions { get; set; } = "signout-callback-oidc";
         public string AllowedScopes { get; set; } = "openid|profile";
-        public IList<UserPrivilege> UserPrivileges { get; set; } = Array.Empty<UserPrivilege>();
+        public IList<UserPrivilege> UserPrivileges { get; set; } = new List<UserPrivilege>();
 
         public IEnumerable<ApiResource> ApiResource()
         {
