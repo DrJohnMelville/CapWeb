@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
+using TokenService.Data;
 using TokenService.Models;
 
 namespace TokenService.Controllers.Users
@@ -16,20 +18,30 @@ namespace TokenService.Controllers.Users
         private readonly IHttpContextAccessor contextFactory;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly Func<ApplicationDbContext> dbFactory;
 
         public UserController(IHttpContextAccessor contextFactory, 
             UserManager<ApplicationUser> userManager, 
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager, Func<ApplicationDbContext> dbFactory)
         {
             this.contextFactory = contextFactory;
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.dbFactory = dbFactory;
         }
 
         // GET
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(new EditUserModel(CurrentUserClaimPrincipal().Claims));
+            return View(await AddSites(new EditUserModel(CurrentUserClaimPrincipal().Claims)));
+        }
+
+        private async Task<EditUserModel> AddSites(EditUserModel editUserModel)
+        {
+            var sub = CurrentUserClaimPrincipal().Claims.ClaimByName(JwtClaimTypes.Subject);
+            editUserModel.Privileges = await 
+                dbFactory().UserPrivileges.AsNoTracking().Where(i => i.UserId == sub).ToListAsync();
+            return editUserModel;
         }
 
         private ClaimsPrincipal CurrentUserClaimPrincipal() => contextFactory.HttpContext.User;
@@ -51,7 +63,7 @@ namespace TokenService.Controllers.Users
             }
 
             model.CurrentPassword = "";
-            return View(model);
+            return View(await AddSites(model));
         }
         private async Task ChangeName(EditUserModel model)
         {

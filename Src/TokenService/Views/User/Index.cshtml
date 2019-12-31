@@ -31,10 +31,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">Password Reset</h3>
                     </div>
-
-            
                     <div class="panel-body">
-
                         <form>
                             <fieldset>
                                 <div class="form-group">
@@ -56,5 +53,19 @@
                             </fieldset>
                         </form>
                     </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Sites you have access to:</h3>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table>
+                        <tr><th>Site</th><th>Access</th></tr>
+                        @foreach (var site in Model.Privileges)
+                        {
+                            <tr><td>@(site.SiteId)</td><td>@(site.Privilege)</td></tr>
+                        }
+                    </table>
                 </div>
             </div>

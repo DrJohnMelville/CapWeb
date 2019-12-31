@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Claims;
 using IdentityModel;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using TokenService.Data.UserPriviliges;
 
 namespace TokenService.Controllers.Users
 {
@@ -16,8 +17,8 @@ namespace TokenService.Controllers.Users
         public string? Password { get; set; }
         [Compare(nameof(Password))]
         public string? PasswordVerification { get; set; }
-
         public string? CurrentPassword { get; set; }
+        public IEnumerable<UserPrivilege> Privileges { get; set; } = Array.Empty<UserPrivilege>();
 
         public EditUserModel()
         {
@@ -29,6 +30,7 @@ namespace TokenService.Controllers.Users
             FullName = source.ClaimByName(JwtClaimTypes.Name);
         }
     }
+    
 
     public static class ClaimListExtensions
     {
