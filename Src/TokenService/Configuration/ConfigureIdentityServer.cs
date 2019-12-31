@@ -11,21 +11,6 @@ using TokenService.Models;
 
 namespace TokenService.Configuration
 {
-    public class ProfileStore:IProfileService
-    {
-        public Task GetProfileDataAsync(ProfileDataRequestContext context)
-        {
-            context.AddRequestedClaims(context.Subject.Claims);
-            return Task.CompletedTask;
-        }
-
-        public Task IsActiveAsync(IsActiveContext context)
-        {
-            context.IsActive = true;
-            return Task.CompletedTask;
-        }
-    }
-
     public static class ConfigureIdentityServer
     {
         public static void AddTokenServer(this IServiceCollection services)
@@ -40,7 +25,7 @@ namespace TokenService.Configuration
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddPersistedGrantStore<PersistentGrantsStore>();
 
-            services.AddSingleton<IProfileService, ProfileStore>();
+            services.AddSingleton<IProfileService, ProfileService>();
             services.AddSingleton<IClientStore, ClientStore>();
             services.AddSingleton<IResourceStore, ResourceStore>();
             services.AddSingleton<IEnumerable<IInvalidateClients>>(d =>

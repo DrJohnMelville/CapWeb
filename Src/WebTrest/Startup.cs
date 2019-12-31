@@ -42,6 +42,11 @@ namespace WebTrest
                     options.ResponseType = "code";
                     options.SaveTokens = true;
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Administrator", policy => policy.RequireClaim("role", "Administrator"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,13 +64,12 @@ namespace WebTrest
             }
 
             app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            
             app.UseAuthorization();
             
             app.UseEndpoints(endpoints =>
