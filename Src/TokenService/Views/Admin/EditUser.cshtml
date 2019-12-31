@@ -1,0 +1,50 @@
+﻿@using System.Security.Policy
+@using TokenService.Data.UserPriviliges
+@model TokenService.Controllers.Admin.EditUserModel
+
+@{
+    ViewBag.Title = "Edit User";
+    Layout = "_Layout";
+}
+
+<div class="col-sm-6">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Edit User</h3>
+        </div>
+
+        <partial name="_ValidationSummary" />
+
+        <div class="panel-body">
+
+            <form method="post">
+                <fieldset>
+                    <input type="hidden" asp-for="Id"/>
+                    <div class="form-group">
+                        <label asp-for="FullName">Full Name</label>
+                        <input class="form-control" placeholder="Name" asp-for="FullName" autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Email"></label>
+                        <input class="form-control" placeholder="Email" asp-for="Email" type="email">
+                    </div>
+                    @for (int i = 0; i < Model.Sites.Length; i++)
+                    {
+                        <div class="form-group">
+                            <label>@Model.Sites[i].DisplayName</label>
+                            <input type="hidden" asp-for="Sites[i].DisplayName"/>
+                            <input type="hidden" asp-for="Sites[i].PrivateName"/>
+                             <input type="radio" asp-for="Sites[i].Privilege" value="@SitePrivilege.None" />No Access &nbsp;&nbsp;
+                             <input type="radio" asp-for="Sites[i].Privilege" value="@SitePrivilege.User" />User &nbsp;&nbsp;
+                             <input type="radio" asp-for="Sites[i].Privilege" value="@SitePrivilege.Administrator" />Administrator 
+                        </div>
+                    }
+                    <div class="form-group">
+                        <button class="btn btn-primary" name="button" value="name">Update User</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    <a href="/Admin">Return to Administrator Page</a>
+</div>

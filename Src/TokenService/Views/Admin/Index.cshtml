@@ -17,7 +17,7 @@
     <ul>
         @foreach (var user in Model.Users)
         {
-            <li><a href="#">@user.UserName</a></li>
+            <li><a href="/Admin/EditUser?id=@user.Id">@user.UserName</a></li>
         }
     </ul>
 </div>

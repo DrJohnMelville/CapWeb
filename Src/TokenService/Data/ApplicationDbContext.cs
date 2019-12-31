@@ -33,7 +33,7 @@ namespace TokenService.Data
             builder.Entity<SigningCredentialData>().HasKey(i => i.KeyId);
             builder.Entity<PersistedGrant>().HasKey(i => i.Key);
             builder.Entity<ClientSite>().HasKey(i => i.ShortName);
-            builder.Entity<UserPrivilege>().HasKey(i=>new {i.SiteId, i.ApplicationUserId});
+            builder.Entity<UserPrivilege>().HasKey(i=>new {i.SiteId, i.UserId});
             builder.Entity<UserPrivilege>().HasOne(i => i.Site).WithMany(i => i.UserPrivileges)
                 .OnDelete(DeleteBehavior.Cascade);
             builder.Entity<UserPrivilege>()

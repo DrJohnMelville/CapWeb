@@ -44,7 +44,7 @@ namespace TokenServiceTest.Data
             Assert.Equal(new []{"https://www.Capp.Example.Com/signin-oidc"}, client.RedirectUris);
             Assert.Equal("https://www.Capp.Example.Com/signout-oidc", client.FrontChannelLogoutUri);
             Assert.Equal("https://www.Capp.Example.Com/signout-callback-oidc", client.PostLogoutRedirectUris.First());
-            Assert.Equal(new[] { "openid", "profile", "apiCapp" }, client.AllowedScopes);
+            Assert.Equal(new[] { "openid", "profile", "apiCApp" }, client.AllowedScopes);
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace TokenServiceTest.Data
             Assert.False(client.RequireClientSecret);
             Assert.Equal(new[]{"The Secret".Sha256()}, client.ClientSecrets.Select(i=>i.Value));
             Assert.Equal(new []{"https://www.Capp.Example.Com/signin-oidc"}, client.RedirectUris);
-            Assert.Equal(new[] { "openid", "profile", "apiCapp" }, client.AllowedScopes);
+            Assert.Equal(new[] { "openid", "profile", "apiCApp" }, client.AllowedScopes);
         }
 
         [Fact]

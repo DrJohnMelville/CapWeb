@@ -38,7 +38,7 @@ namespace WebTrest
                     options.Authority = "https://localhost:5001";
                     options.RequireHttpsMetadata = false;
                     options.ClientId = "webCapWeb";
-                    options.ClientSecret = "HTtL1f7QHeaOZRazUz1fjj5Z5lX60dEKMnesweb7nqY";
+                    options.ClientSecret = "FMv4Yc44ssMvD5bhSWQdwa5bosGPNTUizgClEpj2Hvg";
                     options.ResponseType = "code";
                     options.SaveTokens = true;
                 });
