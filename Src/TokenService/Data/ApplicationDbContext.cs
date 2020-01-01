@@ -4,8 +4,10 @@ using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Configuration;
 using Org.BouncyCastle.Crypto.Operators;
 using TokenService.Configuration.IdentityServer;
 using TokenService.Data.ClientData;
@@ -14,10 +16,10 @@ using TokenService.Models;
 
 namespace TokenService.Data
 {
+    
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
@@ -38,7 +40,7 @@ namespace TokenService.Data
                 .OnDelete(DeleteBehavior.Cascade);
             builder.Entity<UserPrivilege>()
                 .HasOne(i => i.User).WithMany(i => i.UserPrivileges).OnDelete(DeleteBehavior.Cascade);            
-            PatchSqLiteDateTimeOffsets(builder);
+            //PatchSqLiteDateTimeOffsets(builder);
         }
 
         private void PatchSqLiteDateTimeOffsets(ModelBuilder builder)

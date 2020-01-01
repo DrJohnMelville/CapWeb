@@ -11,7 +11,7 @@ namespace TokenService.Configuration
             string connectionString)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(connectionString));
+                options.UseSqlServer(connectionString));
 
             services.AddSingleton<Func<ApplicationDbContext>>(provider => ()=>
                 provider.CreateScope().ServiceProvider.GetService<ApplicationDbContext>());

@@ -17,6 +17,7 @@ using TokenService.Models;
 
 namespace TokenService.Controllers.Admin
 {
+    [SecurityHeaders]
     [Authorize(Policy = "Administrator")]
     public class AdminController : Controller
     {

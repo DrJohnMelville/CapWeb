@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
+using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using TokenService.Models;
 
 namespace TokenService.Controllers.Users
 {
+    [SecurityHeaders]
     public class UserController : Controller
     {
         private readonly IHttpContextAccessor contextFactory;
@@ -31,6 +33,7 @@ namespace TokenService.Controllers.Users
         }
 
         // GET
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await AddSites(new EditUserModel(CurrentUserClaimPrincipal().Claims)));

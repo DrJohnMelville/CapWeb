@@ -34,8 +34,8 @@ namespace TokenService
 
             IisConfiguration(services);
 
-            services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("DefaultConnection"));
-            
+            services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("CapWebConnection"));
+         
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();

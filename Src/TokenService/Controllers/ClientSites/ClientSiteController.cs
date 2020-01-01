@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IdentityModel;
 using IdentityServer4.Configuration;
+using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +15,7 @@ using TokenService.Data.ClientData;
 
 namespace TokenService.Controllers.ClientSites
 {
+    [SecurityHeaders]
     [Authorize(Policy = "Administrator")]
     public class ClientSiteController : Controller
     {

@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Microsoft.IdentityModel.Logging;
 
 namespace TokenService
 {
@@ -20,6 +21,9 @@ namespace TokenService
     {
         public static int Main(string[] args)
         {
+            #if DEBUG
+            IdentityModelEventSource.ShowPII = true;
+            #endif
             ConfigureLogger();
 
             try
@@ -45,21 +49,14 @@ namespace TokenService
 
         private static void TrySeedDatabase(IHost host)
         {
-            if (!File.Exists(SiblingFileName("AspIdUsers.db")))
-            {
-            
                 SeedDatabase(host);
-            }
         }
-
-        public static string SiblingFileName(string sib, [CallerFilePath] string? source = null) =>
-            Path.Join(Path.GetDirectoryName(source), sib);
-
+        
         private static void SeedDatabase(IHost host)
         {
             Log.Information("Seeding database...");
             var config = host.Services.GetRequiredService<IConfiguration>();
-            var connectionString = config.GetConnectionString("DefaultConnection");
+            var connectionString = config.GetConnectionString("CapWebConnection");
             SeedData.EnsureSeedData(connectionString);
             Log.Information("Done seeding database.");
         }
