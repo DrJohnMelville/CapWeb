@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using TokenServiceClientLibrary;
 using WebTrest.Models;
 
 namespace WebTrest.Controllers
@@ -24,7 +25,7 @@ namespace WebTrest.Controllers
             return View();
         }
 
-        [Authorize(Policy = "Administrator")]
+        [RequireSiteAdmin]
         public IActionResult Privacy()
         {
             return View();

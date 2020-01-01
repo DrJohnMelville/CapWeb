@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TokenServiceClientLibrary;
 
 namespace WebTrest
 {
@@ -25,28 +26,8 @@ namespace WebTrest
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
-                })
-                .AddCookie("Cookies")
-                .AddOpenIdConnect("oidc", options =>
-                {
-                    options.Authority = "https://localhost:5001";
-                    options.RequireHttpsMetadata = false;
-                    options.ClientId = "webCapWeb";
-                    options.ClientSecret = "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM";
-                    options.ResponseType = "code";
-                    options.SaveTokens = true;
-                });
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("Administrator", policy => policy.RequireClaim("role", "Administrator"));
-            });
+            services.AddCapWebTokenService("webCapWeb", "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,14 +44,11 @@ namespace WebTrest
                 app.UseHsts();
             }
 
-            app.UseAuthentication();
-
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
-            
-            app.UseAuthorization();
+
+            app.AddCapWebAuthentication();
             
             app.UseEndpoints(endpoints =>
             {
