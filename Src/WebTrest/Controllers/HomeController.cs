@@ -20,11 +20,8 @@ namespace WebTrest.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
+        public IActionResult Index() => View();
+        
         [RequireSiteAdmin]
         public IActionResult Privacy()
         {

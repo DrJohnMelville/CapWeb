@@ -1,7 +1,20 @@
 ﻿@using Microsoft.AspNetCore.Authentication
+@using TokenServiceClientLibrary
 
+<h2>Statics</h2>
+<dl>
+    <dt>Subject id</dt>
+    <dd>@User.SubjectId()</dd>
+    <dt>Name</dt>
+    <dd>@User.Name()</dd>
+    <dt>Email</dt>
+    <dd>@User.Email()</dd>
+    <dt>Role</dt>
+    <dd>@User.Role()</dd>
+    <dt>IsSiteAdministrator</dt>
+    <dd>@User.IsSiteAdministrator()</dd>
+</dl>
 <h2>Claims</h2>
-
 <dl>
     @foreach (var claim in User.Claims)
     {

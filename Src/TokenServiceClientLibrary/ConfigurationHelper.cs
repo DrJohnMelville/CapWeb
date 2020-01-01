@@ -1,22 +1,12 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace TokenServiceClientLibrary
 {
-    public static class CapWebTokenNames
-    {
-        public const string AdmiPolicyName = "Administrator";
-    }
-    public class RequireSiteAdminAttribute : AuthorizeAttribute
-    {
-        public RequireSiteAdminAttribute()
-        {
-            Policy = CapWebTokenNames.AdmiPolicyName;
-        }
-    }
     public static class ConfigurationHelper
     {
         /// <summary>
@@ -30,6 +20,16 @@ namespace TokenServiceClientLibrary
         public static void AddCapWebTokenService(this IServiceCollection services, string clientId, string clientSecret)
         {
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+            RegisterCookieAndOpenIdAuthentication(services, clientId, clientSecret);
+
+            RegisterAdministratorPolicy(services);
+            
+            RegistrClaimPrincipal(services);
+        }
+
+        private static void RegisterCookieAndOpenIdAuthentication(IServiceCollection services, string clientId,
+            string clientSecret)
+        {
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = "Cookies";
@@ -45,12 +45,21 @@ namespace TokenServiceClientLibrary
                     options.ResponseType = "code";
                     options.SaveTokens = true;
                 });
+        }
 
+        private static void RegisterAdministratorPolicy(IServiceCollection services)
+        {
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(CapWebTokenNames.AdmiPolicyName,
                     policy => policy.RequireClaim("role", "Administrator"));
             });
+        }
+
+        private static void RegistrClaimPrincipal(IServiceCollection services)
+        {
+            services.AddTransient<ClaimsPrincipal>(s =>
+                s.GetService<IHttpContextAccessor>().HttpContext.User);
         }
 
         public static void AddCapWebAuthentication(this IApplicationBuilder app)
