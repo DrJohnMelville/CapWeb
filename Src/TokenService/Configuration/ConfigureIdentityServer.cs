@@ -23,7 +23,8 @@ namespace TokenService.Configuration
                     options.Events.RaiseSuccessEvents = true;
                 })
                 .AddAspNetIdentity<ApplicationUser>()
-                .AddPersistedGrantStore<PersistentGrantsStore>();
+                .AddPersistedGrantStore<PersistentGrantsStore>()
+                .AddAppAuthRedirectUriValidator();
 
             services.AddSingleton<IProfileService, ProfileService>();
             services.AddSingleton<IClientStore, ClientStore>();

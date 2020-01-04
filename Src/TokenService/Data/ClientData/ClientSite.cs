@@ -42,11 +42,17 @@ namespace TokenService.Data.ClientData
                 RequireConsent = false,
                 RequirePkce = true,
                 RequireClientSecret = true,
-                RedirectUris = ExpandUriExtensions(RedirectExtenstions),
+                RedirectUris = AddLoopback(ExpandUriExtensions(RedirectExtenstions)),
                 FrontChannelLogoutUri = ExpandUriExtension(FrontChannelLogoutExtension),
                 PostLogoutRedirectUris = ExpandUriExtensions(PostLogoutRedirectExtensions),
                 AllowedScopes = BuildScopes()
             };
+        }
+
+        private ICollection<string> AddLoopback(IList<string> list)
+        {
+            list.Add("http://127.0.0.1");
+            return list;
         }
 
         private ICollection<string> BuildScopes()

@@ -8,11 +8,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTrest", "WebTrest\WebTre
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceClientLibrary", "TokenServiceClientLibrary\TokenServiceClientLibrary.csproj", "{52D89C39-FD57-4CE0-841F-613BAACC2962}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallFromConsoleApp", "CallFromConsoleApp\CallFromConsoleApp.csproj", "{889A81A4-879F-4CC7-B35A-C734B8E04EA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
+	ect an api 
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{58C8915F-0196-47CE-96BC-D04308A1EB9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{58C8915F-0196-47CE-96BC-D04308A1EB9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{52D89C39-FD57-4CE0-841F-613BAACC2962}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52D89C39-FD57-4CE0-841F-613BAACC2962}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52D89C39-FD57-4CE0-841F-613BAACC2962}.Release|Any CPU.Build.0 = Release|Any CPU
+		{889A81A4-879F-4CC7-B35A-C734B8E04EA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{889A81A4-879F-4CC7-B35A-C734B8E04EA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{889A81A4-879F-4CC7-B35A-C734B8E04EA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{889A81A4-879F-4CC7-B35A-C734B8E04EA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

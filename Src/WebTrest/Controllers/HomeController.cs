@@ -23,7 +23,7 @@ namespace WebTrest.Controllers
         public IActionResult Index() => View();
         
         [RequireSiteAdmin]
-        public IActionResult Privacy()
+        public IActionResult Privacy()    
         {
             return View();
         }
@@ -33,5 +33,8 @@ namespace WebTrest.Controllers
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
+
+        [HttpGet]
+        public string MyAccess() => User.Role();    
     }
 }

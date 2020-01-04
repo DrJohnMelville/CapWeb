@@ -38,13 +38,18 @@ namespace TokenServiceClientLibrary
                 .AddCookie("Cookies")
                 .AddOpenIdConnect("oidc", options =>
                 {
-                    options.Authority = "https://CapWeb.DrJohnMelville.Com";
+                    options.Authority = "https://capweb.drjohnmelville.com";
                     options.RequireHttpsMetadata = false;
                     options.ClientId = clientId;
                     options.ClientSecret = clientSecret;
                     options.ResponseType = "code";
                     options.SaveTokens = true;
-                });
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.Authority = "https://capweb.drjohnmelville.com";
+                    options.RequireHttpsMetadata = false;
+                }); 
         }
 
         private static void RegisterAdministratorPolicy(IServiceCollection services)
