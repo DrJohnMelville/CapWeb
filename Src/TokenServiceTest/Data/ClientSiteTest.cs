@@ -41,7 +41,7 @@ namespace TokenServiceTest.Data
             Assert.Equal(GrantTypes.CodeAndClientCredentials, client.AllowedGrantTypes);
             Assert.True(client.RequireClientSecret);
             Assert.Equal(new[]{"The Secret".Sha256()}, client.ClientSecrets.Select(i=>i.Value));
-            Assert.Equal(new []{"https://www.Capp.Example.Com/signin-oidc"}, client.RedirectUris);
+            Assert.Equal(new []{"https://www.Capp.Example.Com/signin-oidc", "http//127.0.0.1"}, client.RedirectUris);
             Assert.Equal("https://www.Capp.Example.Com/signout-oidc", client.FrontChannelLogoutUri);
             Assert.Equal("https://www.Capp.Example.Com/signout-callback-oidc", client.PostLogoutRedirectUris.First());
             Assert.Equal(new[] { "openid", "profile", "apiCApp" }, client.AllowedScopes);
@@ -66,7 +66,11 @@ namespace TokenServiceTest.Data
         public void MultipleRedirectExtensions()
         {
             sut.RedirectExtenstions = "ex1|ex2/ex3";
-            Assert.Equal(new[] {"https://www.Capp.Example.Com/ex1", "https://www.Capp.Example.Com/ex2/ex3"},
+            Assert.Equal(new[]
+                {
+                    "https://www.Capp.Example.Com/ex1", "https://www.Capp.Example.Com/ex2/ex3",
+                    "http://127.0.0.1"
+                },
                 sut.Clients()[0].RedirectUris);
         }
     }
