@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace AspNetCoreLocalLog.Data
 {
-  public sealed class CircularBuffer<T>
+  public class CircularBuffer<T>
   {
     private readonly T[] items;
     private bool bufferIsFull = false;
