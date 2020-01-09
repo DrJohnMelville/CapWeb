@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using AspNetCoreLocalLog.Data;
-using Serilog;
-using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -32,12 +30,5 @@ namespace AspNetCoreLocalLog.LogSink
     {
       innerSink.Push(logEvent);
     }
-  }
-
-  public static class VolitileWriterSinkExtensions
-  {
-    public static LoggerConfiguration VolitileSink(this LoggerSinkConfiguration lsc,
-      ICircularMemorySink target) =>
-      lsc.Sink(new VolitileSerilogSink(target));
   }
 }
