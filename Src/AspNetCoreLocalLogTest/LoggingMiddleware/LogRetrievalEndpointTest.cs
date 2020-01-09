@@ -5,11 +5,9 @@ using AspNetCoreLocalLog.LoggingMiddleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Xunit;
-using Xunit.Sdk;
 
 namespace AspNetCoreLocalLogTest.LoggingMiddleware
 {
@@ -20,25 +18,28 @@ namespace AspNetCoreLocalLogTest.LoggingMiddleware
     private readonly LogRetrievalEndpoint sut;
     private readonly TestServer server;
     private readonly HttpClient client;
+    private readonly Mock<IRetrieveLog> logSource = new Mock<IRetrieveLog>();
     public LogRetrievalEndpointTest()
     {
-      sut = new LogRetrievalEndpoint();
-      sut.WithSecret("!!Secret");
+      logSource.Setup(i => i.TryLogCommand(It.IsAny<string>(), It.IsAny<IHttpOutput>())).ReturnsAsync(
+        (string s, IHttpOutput output) => s.Equals("json") || s.Equals("html"));
+      sut = new LogRetrievalEndpoint(logSource.Object);
+      sut.WithSecret("WowSecret");
+      server = new TestServer(CreateHostBuilder());
+      client = server.CreateClient();
+    }
 
+    private IWebHostBuilder CreateHostBuilder()
+    {
       var builder = new WebHostBuilder()
         .UseEnvironment("Testing")
-        .ConfigureServices(services =>
-        {
-          
-        })
+        .ConfigureServices(services => { })
         .Configure(app =>
         {
           app.Use(sut.Process);
           app.Use(DefaultEndpoint);
         });
-      
-      server = new TestServer(builder);
-      client = server.CreateClient();
+      return builder;
     }
 
     private Task DefaultEndpoint(HttpContext context, Func<Task> neverCalled)
@@ -47,13 +48,18 @@ namespace AspNetCoreLocalLogTest.LoggingMiddleware
       return Task.CompletedTask;
     }
 
-    [Fact]
-    public async Task PassThroughTypical()
+    [Theory]
+    [InlineData("/Home/Index", 1)] // typical urls get through.
+    [InlineData("/QuickLog/WowSecret/html", 0)] // typical urls get through.
+    [InlineData("/QuickLog/WowSecret/json", 0)] // typical urls get through.
+    [InlineData("/QuickLog/WowSecret/Foo", 1)] // Unknown Command
+    [InlineData("/QuickLog/WowSecre1t/json", 1)] // Secret wrong
+    [InlineData("/Quicklog/WowSecret/json", 1)] // prefix wrong
+    public async Task PassthroughIsValid(string uri, int expectedCalls)
     {
-      await client.GetAsync("/Home/Index");
-      Assert.Equal(1, finalCalls);
+      await client.GetAsync(uri);
+      Assert.Equal(expectedCalls, finalCalls);
       
     }
-
   }
 }
