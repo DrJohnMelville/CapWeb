@@ -59,22 +59,7 @@ namespace TokenService
             SeedData.EnsureSeedData(connectionString);
             Log.Information("Done seeding database.");
         }
-
-        // private static void ConfigureLogger()
-        // {
-        //     Log.Logger = new LoggerConfiguration()
-        //         .MinimumLevel.Debug()
-        //         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-        //         .MinimumLevel.Override("System", LogEventLevel.Warning)
-        //         .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
-        //         .Enrich.FromLogContext()
-        //        .WriteTo.Console(
-        //             outputTemplate:
-        //             "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
-        //             theme: AnsiConsoleTheme.Literate)
-        //         .CreateLogger();
-        // }
-
+        
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
