@@ -36,6 +36,11 @@ namespace TokenServiceClientLibrary
                     options.DefaultChallengeScheme = "oidc";
                 })
                 .AddCookie("Cookies")
+                .AddJwtBearer(options =>
+                {
+                    options.Authority = "https://capweb.drjohnmelville.com";
+                    options.RequireHttpsMetadata = false;
+                })
                 .AddOpenIdConnect("oidc", options =>
                 {
                     options.Authority = "https://capweb.drjohnmelville.com";
@@ -44,12 +49,7 @@ namespace TokenServiceClientLibrary
                     options.ClientSecret = clientSecret;
                     options.ResponseType = "code";
                     options.SaveTokens = true;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.Authority = "https://capweb.drjohnmelville.com";
-                    options.RequireHttpsMetadata = false;
-                }); 
+                });
         }
 
         private static void RegisterAdministratorPolicy(IServiceCollection services)

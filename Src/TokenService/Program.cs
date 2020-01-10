@@ -24,8 +24,7 @@ namespace TokenService
             #if DEBUG
             IdentityModelEventSource.ShowPII = true;
             #endif
-            ConfigureLogger();
-
+            
             try
             {
                 var host = CreateHostBuilder(args).Build();
@@ -61,20 +60,20 @@ namespace TokenService
             Log.Information("Done seeding database.");
         }
 
-        private static void ConfigureLogger()
-        {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .MinimumLevel.Override("System", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-               .WriteTo.Console(
-                    outputTemplate:
-                    "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
-                    theme: AnsiConsoleTheme.Literate)
-                .CreateLogger();
-        }
+        // private static void ConfigureLogger()
+        // {
+        //     Log.Logger = new LoggerConfiguration()
+        //         .MinimumLevel.Debug()
+        //         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        //         .MinimumLevel.Override("System", LogEventLevel.Warning)
+        //         .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+        //         .Enrich.FromLogContext()
+        //        .WriteTo.Console(
+        //             outputTemplate:
+        //             "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+        //             theme: AnsiConsoleTheme.Literate)
+        //         .CreateLogger();
+        // }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)

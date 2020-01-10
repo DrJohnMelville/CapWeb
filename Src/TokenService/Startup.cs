@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using AspNetCoreLocalLog.LogSink;
 using IdentityServer4.Quickstart.UI;
 using TokenService.Data;
 using TokenService.Models;
@@ -13,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog.Events;
 using TokenService.Configuration;
 using TokenService.Services.EmailServices;
 
@@ -32,7 +34,7 @@ namespace TokenService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-
+            services.AddLogRetrieval();
             IisConfiguration(services);
 
             services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("CapWebConnection"));
@@ -47,16 +49,6 @@ namespace TokenService
 
             services.AddAuthorization(options => options.AddPolicy("Administrator",
                 pb => pb.RequireClaim("email", "johnmelville@gmail.com")));
-
-            // services.AddAuthentication()
-            //     .AddGoogle(options =>
-            //     {
-            //         // register your IdentityServer with Google at https://console.developers.google.com
-            //         // enable the Google+ API
-            //         // set the redirect URI to http://localhost:5000/signin-google
-            //         options.ClientId = "copy client ID from Google here";
-            //         options.ClientSecret = "copy client secret from Google here";
-            //     });
         }
 
         private static void IisConfiguration(IServiceCollection services)
@@ -81,6 +73,14 @@ namespace TokenService
             ShowMoreErrorsInDevelopmentEnviornment(app);
 
             EnforceHttpsConnectionsOnly(app);
+
+            app.UseLogRetrieval(logger => logger
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("System", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+            ).WithSecret("Lollipop");
 
             app.UseStaticFiles();
             

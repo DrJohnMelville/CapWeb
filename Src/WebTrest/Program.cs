@@ -16,7 +16,7 @@ namespace WebTrest
     {
         public static void Main(string[] args)
         {
-            ConfigureLogger();
+//            ConfigureLogger();
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -32,8 +32,8 @@ namespace WebTrest
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .MinimumLevel.Override("System", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+                .MinimumLevel.Override("System", LogEventLevel.Debug)
                 .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Console(

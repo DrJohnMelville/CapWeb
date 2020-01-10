@@ -51,7 +51,9 @@ namespace WebTrest
             app.UseHttpsRedirection();
             app.UseLogRetrieval(logger =>
                 {
-                    logger.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning);
+//                    logger.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning);
+                    logger.MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Debug);
+                    logger.Enrich.FromLogContext();
                 }).WithSecret("TeadyBear");
             app.UseSerilogRequestLogging();
             app.UseStaticFiles();
