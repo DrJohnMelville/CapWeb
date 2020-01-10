@@ -80,7 +80,7 @@ namespace TokenService
                 .MinimumLevel.Override("System", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
                 .Enrich.FromLogContext()
-            ).WithSecret("Lollipop");
+            ).WithSecret(Configuration.GetValue<string>("LogRetrieval:Secret"));
 
             app.UseStaticFiles();
             
