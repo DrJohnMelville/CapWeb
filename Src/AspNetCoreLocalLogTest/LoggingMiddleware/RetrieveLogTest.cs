@@ -44,11 +44,19 @@ namespace AspNetCoreLocalLogTest.LoggingMiddleware
       
       Assert.True(await sut.TryLogCommand("html", output.Object));
       output.Verify(i=>i.WriteAsync(
-        "<html><head></head><body><h1>Quick Log</h1><table><tr><th>Date</th><th>Event</th></tr>"));
+        "<html><head><link rel='stylesheet' href='css'/></head><body><h1>Quick Log</h1><table><tr><th>Time</th><th>Level</th><th>Event</th></tr>"));
       output.Verify(i=>i.WriteAsync(
         "</table></body></html>"));
       source.Verify(i=>i.Clear());
     }
+
+    [Fact]
+    public async Task OutputCss()
+    {
+      Assert.True(await sut.TryLogCommand("css", output.Object));
+      output.Verify(i=>i.WriteAsync(HtmlLogFormatter.CssFile));
+    }
+
 
 
   }

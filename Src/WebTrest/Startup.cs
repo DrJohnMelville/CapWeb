@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreLocalLog.LogSink;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Events;
 using TokenServiceClientLibrary;
 
 namespace WebTrest
@@ -26,13 +29,14 @@ namespace WebTrest
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-
             services.AddCapWebTokenService("webCapWeb", "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM");
+            services.AddLogRetrieval();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -44,6 +48,12 @@ namespace WebTrest
                 app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
+            app.UseLogRetrieval(logger =>
+                {
+                    logger.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning);
+                }).WithSecret("TeadyBear");
+            app.UseSerilogRequestLogging();
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -55,7 +65,7 @@ namespace WebTrest
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}").RequireAuthorization();
-            }).UseHttpsRedirection();
+            });
         }
     }
 }
