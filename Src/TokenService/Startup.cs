@@ -36,6 +36,14 @@ namespace TokenService
             services.AddControllersWithViews();
             services.AddLogRetrieval();
             IisConfiguration(services);
+            
+            services.AddSerilogLogger(logger => logger
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("System", LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+            );
 
             services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("CapWebConnection"));
          
@@ -74,13 +82,7 @@ namespace TokenService
 
             EnforceHttpsConnectionsOnly(app);
 
-            app.UseLogRetrieval(logger => logger
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .MinimumLevel.Override("System", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-            ).WithSecret(Configuration.GetValue<string>("LogRetrieval:Secret"));
+            app.UseLogRetrieval().WithSecret(Configuration.GetValue<string>("LogRetrieval:Secret"));
 
             app.UseStaticFiles();
             

@@ -6,6 +6,7 @@ using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using TokenService.Data;
 
 namespace TokenService.Configuration.IdentityServer
@@ -42,7 +43,7 @@ namespace TokenService.Configuration.IdentityServer
                 .ToListAsync())
                 .SelectMany(i=>i.ApiResource()));
             validStore = true;
-        }
+          }
 
         public async Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeAsync(IEnumerable<string> scopeNames)
         {

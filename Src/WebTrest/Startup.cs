@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using Serilog;
 using Serilog.Events;
 using TokenServiceClientLibrary;
@@ -28,7 +29,13 @@ namespace WebTrest
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true;
             services.AddControllersWithViews();
+            services.AddSerilogLogger(logger =>
+            {
+                logger.MinimumLevel.Debug();
+                logger.Enrich.FromLogContext();
+            });
             services.AddCapWebTokenService("webCapWeb", "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM");
             services.AddLogRetrieval();
         }
@@ -49,12 +56,7 @@ namespace WebTrest
             }
 
             app.UseHttpsRedirection();
-            app.UseLogRetrieval(logger =>
-                {
-//                    logger.MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning);
-                    logger.MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Debug);
-                    logger.Enrich.FromLogContext();
-                }).WithSecret("TeadyBear");
+            app.UseLogRetrieval().WithSecret("TeadyBear");
             app.UseSerilogRequestLogging();
             app.UseStaticFiles();
 

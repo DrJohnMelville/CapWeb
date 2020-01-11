@@ -1,6 +1,7 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,23 +24,20 @@ namespace TokenServiceClientLibrary
             RegisterCookieAndOpenIdAuthentication(services, clientId, clientSecret);
 
             RegisterAdministratorPolicy(services);
-            
+
             RegistrClaimPrincipal(services);
         }
 
         private static void RegisterCookieAndOpenIdAuthentication(IServiceCollection services, string clientId,
             string clientSecret)
         {
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
-                })
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddCookie("Cookies")
                 .AddJwtBearer(options =>
                 {
                     options.Authority = "https://capweb.drjohnmelville.com";
                     options.RequireHttpsMetadata = false;
+                    options.Audience = "apiCapWeb";
                 })
                 .AddOpenIdConnect("oidc", options =>
                 {
@@ -70,7 +68,7 @@ namespace TokenServiceClientLibrary
         public static void AddCapWebAuthentication(this IApplicationBuilder app)
         {
             app.UseHttpsRedirection();
-            app.UseAuthentication();
+            app.UseMiddleware<MultiAuthenticationMiddleware>();
             app.UseAuthorization();
         }
     }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Configuration;
 using Serilog.Core;
+using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 
 namespace AspNetCoreLocalLog.LogSink
@@ -22,26 +23,28 @@ namespace AspNetCoreLocalLog.LogSink
       servicies.AddSingleton<ICircularMemorySink, CircularMemorySink>();
       servicies.AddSingleton<LogRetrievalEndpoint>();
       servicies.AddSingleton<IRetrieveLog, RetrieveLog>();
-      
     }
-    public static IConfigureLogRetrieval UseLogRetrieval(this IApplicationBuilder builder, 
-      Action<LoggerConfiguration>? configureLogger = null)
+    public static IConfigureLogRetrieval UseLogRetrieval(this IApplicationBuilder builder)
     {
-      SetupLogger(configureLogger, builder.ApplicationServices.GetService<VolitileSerilogSink>());
+      GC.KeepAlive(builder.ApplicationServices.GetService<ILogger>()); // make sure the static is initalized
       return AddLogRetrievaliddleware(builder);
     }
 
-    private static void SetupLogger(Action<LoggerConfiguration>? configureLogger, VolitileSerilogSink sink)
+    public static void AddSerilogLogger(this IServiceCollection services, Action<LoggerConfiguration>? configureLogger)
     {
-      var factory = new LoggerConfiguration();
-      configureLogger?.Invoke(factory);
-      Log.Logger = factory
-        .WriteTo.Console(
-          outputTemplate:
-          "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
-          theme: AnsiConsoleTheme.Literate)
-        .WriteTo.Sink(sink)
-        .CreateLogger();
+      services.AddSingleton<ILogger>(isp =>
+      {
+        var factory = new LoggerConfiguration();
+        configureLogger?.Invoke(factory);
+        Log.Logger = factory
+          .WriteTo.Console(
+            outputTemplate:
+            "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+            theme: AnsiConsoleTheme.Literate)
+          .WriteTo.Sink(isp.GetService<VolitileSerilogSink>())
+          .CreateLogger();
+        return Log.Logger;
+      });
     }
 
     private static IConfigureLogRetrieval AddLogRetrievaliddleware(IApplicationBuilder builder)

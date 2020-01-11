@@ -36,7 +36,7 @@ namespace CallFromConsoleApp
             
             client.SetBearerToken(token.AccessToken);
 
-            Console.WriteLine(
+            Console.WriteLine("Access Response: "+
                 await (await client.GetAsync("https://localhost:5010/Home/MyAccess")).Content.ReadAsStringAsync()
             );
             
@@ -44,5 +44,3 @@ namespace CallFromConsoleApp
         }
     }
 }
-
-    
