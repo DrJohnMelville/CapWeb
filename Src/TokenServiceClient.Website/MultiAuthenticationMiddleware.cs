@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace TokenServiceClientLibrary
+namespace TokenServiceClient.Website
 {
   public class MultiAuthenticationMiddleware
   {
@@ -34,9 +34,9 @@ namespace TokenServiceClientLibrary
       }
     }
 
-    private static async Task<bool> TryAuthenticationModel(HttpContext context, AuthenticationScheme defaultAuthenticate)
+    private static async Task<bool> TryAuthenticationModel(HttpContext context, AuthenticationScheme scheme)
     {
-      var result = await context.AuthenticateAsync(defaultAuthenticate.Name);
+      var result = await context.AuthenticateAsync(scheme.Name);
       if (result?.Principal != null)
       {
         context.User = result.Principal;
@@ -54,8 +54,8 @@ namespace TokenServiceClientLibrary
       var handlers = context.RequestServices.GetRequiredService<IAuthenticationHandlerProvider>();
       foreach (var scheme in await schemes.GetRequestHandlerSchemesAsync())
       {
-        var handler = await handlers.GetHandlerAsync(context, scheme.Name) as IAuthenticationRequestHandler;
-        if (handler != null && await handler.HandleRequestAsync())
+        if (await handlers.GetHandlerAsync(context, scheme.Name) is IAuthenticationRequestHandler handler && 
+            await handler.HandleRequestAsync())
         {
           return true;
         }

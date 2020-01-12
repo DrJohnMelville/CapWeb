@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices.WindowsRuntime;
 using IdentityModel;
 using IdentityServer4.Models;
+using Org.BouncyCastle.Ocsp;
 using TokenService.Data.UserPriviliges;
 
 namespace TokenService.Data.ClientData
@@ -22,8 +24,13 @@ namespace TokenService.Data.ClientData
 
         public IEnumerable<ApiResource> ApiResource()
         {
-            return new []{new ApiResource($"api{ShortName}", FriendlyName)};
+            return new []{new ApiResource($"api{ShortName}", FriendlyName, RequiredClaims)};
         }
+
+        private static readonly string[] RequiredClaims =
+        {
+            JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Role
+        };
 
         public Client[] Clients()
         {

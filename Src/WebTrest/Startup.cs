@@ -13,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Serilog;
 using Serilog.Events;
-using TokenServiceClientLibrary;
+using TokenServiceClient.Website;
 
 namespace WebTrest
 {

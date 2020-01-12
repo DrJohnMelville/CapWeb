@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 
-namespace TokenServiceClientLibrary
+namespace TokenServiceClient.Website
 {
     public static class ClaimsPrincipleOperations
     {

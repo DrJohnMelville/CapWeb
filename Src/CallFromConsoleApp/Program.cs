@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using IdentityModel.Client;
 using IdentityModel.OidcClient;
+using TokenServiceClient.Native;
 
 namespace CallFromConsoleApp
 {
@@ -13,34 +15,44 @@ namespace CallFromConsoleApp
         {
             Console.WriteLine("Request Token");
 
+
+
+            CapWebTokenHolder holder = await CapWebTokenHolder.Authenticate("CapWeb",
+                "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM");
+
+            Console.WriteLine("Token Obtained");
+
             var client = new HttpClient();
-
-            var systemBrowser = new SystemBrowser();
-            var options = new OidcClientOptions
-            {
-                Authority = "https://capweb.drjohnmelville.com",
-                ClientId = "webCapWeb",
-                RedirectUri = systemBrowser.RedirectUri,
-                ClientSecret = "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM",
-                Scope = "openid profile apiCapWeb",
-                Browser = systemBrowser,
-                Flow = OidcClientOptions.AuthenticationFlow.AuthorizationCode,
-                ResponseMode = OidcClientOptions.AuthorizeResponseMode.Redirect
-            };
-
-            var oidClient = new OidcClient(options);
-
-            var token = await oidClient.LoginAsync(new LoginRequest());
-            
-            Console.WriteLine($"Token: {token.AccessToken}");
-            
-            client.SetBearerToken(token.AccessToken);
-
+            holder.AddBearerToken(client);
             Console.WriteLine("Access Response: "+
                 await (await client.GetAsync("https://localhost:5010/Home/MyAccess")).Content.ReadAsStringAsync()
             );
             
             Console.WriteLine("Done");
+        }
+
+        private static void DumpToken(string tokenText)
+        {
+            Console.WriteLine(tokenText);
+            var handler = new JwtSecurityTokenHandler();
+            if (!handler.CanReadToken(tokenText))
+            {
+                Console.WriteLine("Not a JWT");
+                return;
+            }
+
+            var decoded = handler.ReadJwtToken(tokenText);
+            Console.WriteLine("  Header");
+            foreach (var head in decoded.Header)
+            {
+                Console.WriteLine($"    {head.Key:20} {head.Value}");
+                    
+            }            Console.WriteLine("  Header");
+            foreach (var claim in decoded.Claims)
+            {
+                Console.WriteLine($"    {claim.Type:20} {claim.Value}");
+                    
+            }
         }
     }
 }

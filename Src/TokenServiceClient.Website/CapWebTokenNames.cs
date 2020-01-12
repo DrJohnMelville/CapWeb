@@ -1,4 +1,4 @@
-﻿namespace TokenServiceClientLibrary
+﻿namespace TokenServiceClient.Website
 {
     public static class CapWebTokenNames
     {

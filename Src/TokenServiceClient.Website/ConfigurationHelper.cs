@@ -1,12 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace TokenServiceClientLibrary
+namespace TokenServiceClient.Website
 {
     public static class ConfigurationHelper
     {

@@ -6,13 +6,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceTest", "TokenSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTrest", "WebTrest\WebTrest.csproj", "{687BA244-8156-4079-BAC0-6278A4875DC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceClientLibrary", "TokenServiceClientLibrary\TokenServiceClientLibrary.csproj", "{52D89C39-FD57-4CE0-841F-613BAACC2962}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceClient.Website", "TokenServiceClient.Website\TokenServiceClient.Website.csproj", "{52D89C39-FD57-4CE0-841F-613BAACC2962}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallFromConsoleApp", "CallFromConsoleApp\CallFromConsoleApp.csproj", "{889A81A4-879F-4CC7-B35A-C734B8E04EA3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreLocalLog", "AspNetCoreLocalLog\AspNetCoreLocalLog.csproj", "{9EBFAEA6-FE70-4D13-8DC5-0960919ED900}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreLocalLogTest", "AspNetCoreLocalLogTest\AspNetCoreLocalLogTest.csproj", "{80161922-5575-456E-A769-B27080B7ED62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceClient.Native", "TokenServiceClient.Native\TokenServiceClient.Native.csproj", "{E7E15C1D-E79F-4324-A02A-920BAD5BB297}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,5 +50,9 @@ Global
 		{80161922-5575-456E-A769-B27080B7ED62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80161922-5575-456E-A769-B27080B7ED62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80161922-5575-456E-A769-B27080B7ED62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7E15C1D-E79F-4324-A02A-920BAD5BB297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7E15C1D-E79F-4324-A02A-920BAD5BB297}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7E15C1D-E79F-4324-A02A-920BAD5BB297}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7E15C1D-E79F-4324-A02A-920BAD5BB297}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

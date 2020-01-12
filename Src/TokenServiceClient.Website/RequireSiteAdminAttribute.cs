@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace TokenServiceClientLibrary
+namespace TokenServiceClient.Website
 {
     public class RequireSiteAdminAttribute : AuthorizeAttribute
     {

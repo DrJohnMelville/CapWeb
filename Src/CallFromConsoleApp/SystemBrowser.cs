@@ -24,7 +24,7 @@ namespace CallFromConsoleApp
             listener.Stop();
             return port;
         }
-
+        
         public async Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = new CancellationToken())
         {
             using (listener)
