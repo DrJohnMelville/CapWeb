@@ -27,7 +27,7 @@ namespace TokenServiceTest.Data
         public void Clients()
         {
             var clients = sut.Clients();
-            Assert.Equal(2, clients.Length);
+            Assert.Single(clients);
             Assert.True(clients.All(i=>i!=null));
             
         }
@@ -44,21 +44,6 @@ namespace TokenServiceTest.Data
             Assert.Equal(new []{"https://www.Capp.Example.Com/signin-oidc", "http://127.0.0.1"}, client.RedirectUris);
             Assert.Equal("https://www.Capp.Example.Com/signout-oidc", client.FrontChannelLogoutUri);
             Assert.Equal("https://www.Capp.Example.Com/signout-callback-oidc", client.PostLogoutRedirectUris.First());
-            Assert.Equal(new[] { "openid", "profile", "apiCApp" }, client.AllowedScopes);
-        }
-
-        [Fact]
-        public void ApiClientVerify()
-        {
-            var client = sut.Clients()[1];
-            Assert.Equal("appCApp", client.ClientId);
-            Assert.Equal("ClientApplication", client.ClientName);
-            Assert.Equal("https://www.Capp.Example.Com", client.ClientUri);
-            Assert.Equal(GrantTypes.Code, client.AllowedGrantTypes);
-            Assert.True(client.RequirePkce);
-            Assert.False(client.RequireClientSecret);
-            Assert.Equal(new[]{"The Secret".Sha256()}, client.ClientSecrets.Select(i=>i.Value));
-            Assert.Equal(new []{"https://www.Capp.Example.Com/signin-oidc"}, client.RedirectUris);
             Assert.Equal(new[] { "openid", "profile", "apiCApp" }, client.AllowedScopes);
         }
 

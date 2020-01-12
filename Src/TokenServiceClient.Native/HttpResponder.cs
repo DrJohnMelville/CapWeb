@@ -28,7 +28,7 @@ namespace TokenServiceClient.Native
     {
       var readToEndAsync = await reader.ReadLineAsync();
       await WriteWebResponse();
-      return readToEndAsync;
+      return readToEndAsync??"";
 
     }
     private Task WriteWebResponse() => 

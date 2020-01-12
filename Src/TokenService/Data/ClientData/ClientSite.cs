@@ -34,7 +34,7 @@ namespace TokenService.Data.ClientData
 
         public Client[] Clients()
         {
-            return new Client[]{WebClient(), AppClient()};
+            return new Client[]{WebClient()};
         }
 
         private Client WebClient()
@@ -83,22 +83,5 @@ namespace TokenService.Data.ClientData
             extensions.Split('|', StringSplitOptions.RemoveEmptyEntries)
                 .Select(i => $"{BaseUri}/{i}")
                 .ToList();
-
-        private Client AppClient()
-        {
-            return new Client
-            {
-                ClientId = $"app{ShortName}",
-                ClientName = FriendlyName,
-                ClientUri = BaseUri,
-                AlwaysIncludeUserClaimsInIdToken = true,
-                AllowedGrantTypes = GrantTypes.Code,
-                ClientSecrets = new[]{new Secret(ClientSecret.Sha256())},
-                RequirePkce = true,
-                RequireClientSecret = false,
-                RedirectUris = ExpandUriExtensions(RedirectExtenstions),
-                AllowedScopes = BuildScopes()
-            };
-        }
     }
 }
