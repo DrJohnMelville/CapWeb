@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,30 +28,6 @@ namespace CallFromConsoleApp
             );
             
             Console.WriteLine("Done");
-        }
-
-        private static void DumpToken(string tokenText)
-        {
-            Console.WriteLine(tokenText);
-            var handler = new JwtSecurityTokenHandler();
-            if (!handler.CanReadToken(tokenText))
-            {
-                Console.WriteLine("Not a JWT");
-                return;
-            }
-
-            var decoded = handler.ReadJwtToken(tokenText);
-            Console.WriteLine("  Header");
-            foreach (var head in decoded.Header)
-            {
-                Console.WriteLine($"    {head.Key:20} {head.Value}");
-                    
-            }            Console.WriteLine("  Header");
-            foreach (var claim in decoded.Claims)
-            {
-                Console.WriteLine($"    {claim.Type:20} {claim.Value}");
-                    
-            }
         }
     }
 }

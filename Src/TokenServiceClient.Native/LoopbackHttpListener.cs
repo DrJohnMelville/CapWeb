@@ -21,7 +21,6 @@ namespace TokenServiceClient.Native
 
     public async Task<string?> WaitForCallbackAsync()
     {
-      Console.WriteLine("Listening on:" + RedirectUri);
       using var httpClientConnection = await listener.AcceptTcpClientAsync();
       await using  var responder = new HttpResponder(httpClientConnection.GetStream());
       return await responder.HandleHttpRequest();

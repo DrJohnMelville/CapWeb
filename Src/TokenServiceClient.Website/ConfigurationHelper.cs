@@ -30,7 +30,11 @@ namespace TokenServiceClient.Website
         private static void RegisterCookieAndOpenIdAuthentication(IServiceCollection services, string clientId,
             string clientSecret)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(opt =>
+                {
+                    opt.DefaultSignInScheme = "Cookies";
+                    opt.DefaultChallengeScheme = "oidc";
+                })
                 .AddCookie("Cookies")
                 .AddJwtBearer(options =>
                 {
