@@ -17,6 +17,7 @@ namespace TokenService.Controllers.ClientSites
 {
     [SecurityHeaders]
     [Authorize(Policy = "Administrator")]
+    [AutoValidateAntiforgeryToken]
     public class ClientSiteController : Controller
     {
         private readonly ApplicationDbContext _context;

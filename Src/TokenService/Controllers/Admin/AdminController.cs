@@ -19,6 +19,7 @@ namespace TokenService.Controllers.Admin
 {
     [SecurityHeaders]
     [Authorize(Policy = "Administrator")]
+    [AutoValidateAntiforgeryToken]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext db;
@@ -76,16 +77,6 @@ namespace TokenService.Controllers.Admin
             var claims = await userManager.GetClaimsAsync(user);
             return View(await UserToModel(claims, id));
         }
-        // .Select(i => new WebsiteInformation
-        // {
-        //     DisplayName = i.FriendlyName,
-        //     PrivateName = i.ShortName,
-        //     Privilege = i.UserPrivileges
-        //         .Where(i => i.UserId == id)
-        //         .Select(i => i.Privilege)
-        //         .DefaultIfEmpty(SitePrivilege.None)
-        //         .First()
-        // })
 
         private async Task<EditUserModel> UserToModel(IList<Claim> claims, string id)
         {

@@ -15,6 +15,7 @@ using TokenService.Models;
 namespace TokenService.Controllers.Users
 {
     [SecurityHeaders]
+    [AutoValidateAntiforgeryToken]
     public class UserController : Controller
     {
         private readonly IHttpContextAccessor contextFactory;

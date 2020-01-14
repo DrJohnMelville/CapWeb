@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web;
+using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,8 @@ namespace TokenService.Controllers.Users
 {
     
 
+    [SecurityHeaders]
+    [AutoValidateAntiforgeryToken]
     public class PickPasswordController: Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
