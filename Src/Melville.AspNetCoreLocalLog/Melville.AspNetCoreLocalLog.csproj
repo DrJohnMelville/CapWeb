@@ -3,6 +3,16 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <Nullable>enable</Nullable>
+        <RootNamespace>AspNetCoreLocalLog</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Version>0.1.0</Version>
+        <Authors>John Melville, MS, MD</Authors>
+        <Company>Melville Computing</Company>
+        <Title>ASP Net Core Logging Retrieval endpoints</Title>
+        <PackageDescription>Add endpoint to retrieved logs from the website.</PackageDescription>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>

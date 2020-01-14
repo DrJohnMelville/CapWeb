@@ -29,6 +29,6 @@
     <Folder Include="Migrations" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AspNetCoreLocalLog\AspNetCoreLocalLog.csproj" />
+    <ProjectReference Include="..\Melville.AspNetCoreLocalLog\Melville.AspNetCoreLocalLog.csproj" />
   </ItemGroup>
 </Project>

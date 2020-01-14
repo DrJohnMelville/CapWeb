@@ -40,9 +40,4 @@ namespace AspNetCoreLocalLog.LoggingMiddleware
       return this;
     }
   }
-
-  public sealed class ExceptionLogger
-  {
-    
-  }
 }

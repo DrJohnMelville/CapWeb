@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceClient.Website"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallFromConsoleApp", "CallFromConsoleApp\CallFromConsoleApp.csproj", "{889A81A4-879F-4CC7-B35A-C734B8E04EA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreLocalLog", "AspNetCoreLocalLog\AspNetCoreLocalLog.csproj", "{9EBFAEA6-FE70-4D13-8DC5-0960919ED900}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Melville.AspNetCoreLocalLog", "Melville.AspNetCoreLocalLog\Melville.AspNetCoreLocalLog.csproj", "{9EBFAEA6-FE70-4D13-8DC5-0960919ED900}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreLocalLogTest", "AspNetCoreLocalLogTest\AspNetCoreLocalLogTest.csproj", "{80161922-5575-456E-A769-B27080B7ED62}"
 EndProject

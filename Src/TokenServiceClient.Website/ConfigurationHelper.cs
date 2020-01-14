@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +33,7 @@ namespace TokenServiceClient.Website
         {
             services.AddAuthentication(opt =>
                 {
+                    opt.DefaultAuthenticateScheme = "Cookies";
                     opt.DefaultSignInScheme = "Cookies";
                     opt.DefaultChallengeScheme = "oidc";
                 })
@@ -40,16 +42,17 @@ namespace TokenServiceClient.Website
                 {
                     options.Authority = "https://capweb.drjohnmelville.com";
                     options.RequireHttpsMetadata = false;
-                    options.Audience = "apiCapWeb";
+                    options.Audience = "api"+clientId;
                 })
                 .AddOpenIdConnect("oidc", options =>
                 {
                     options.Authority = "https://capweb.drjohnmelville.com";
                     options.RequireHttpsMetadata = false;
-                    options.ClientId = clientId;
+                    options.ClientId = "web"+clientId;
                     options.ClientSecret = clientSecret;
                     options.ResponseType = "code";
                     options.SaveTokens = true;
+                    options.AuthenticationMethod = OpenIdConnectRedirectBehavior.FormPost;
                 });
         }
 

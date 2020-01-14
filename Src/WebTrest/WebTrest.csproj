@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AspNetCoreLocalLog\AspNetCoreLocalLog.csproj" />
+      <ProjectReference Include="..\Melville.AspNetCoreLocalLog\Melville.AspNetCoreLocalLog.csproj" />
       <ProjectReference Include="..\TokenServiceClient.Website\TokenServiceClient.Website.csproj" />
     </ItemGroup>
 

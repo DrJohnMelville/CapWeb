@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -35,6 +38,12 @@ namespace WebTrest.Controllers
         }
 
         [HttpGet]
-        public string MyAccess() => User.Role();    
+        public string MyAccess() => User.Role();
+
+        public  IActionResult Logout()
+        {
+            return SignOut("Cookies", "oidc");
+        }
+
     }
 }

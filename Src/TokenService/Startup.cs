@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using Serilog.Events;
 using TokenService.Configuration;
 using TokenService.Services.EmailServices;
@@ -38,7 +39,7 @@ namespace TokenService
             IisConfiguration(services);
             
             services.AddSerilogLogger(logger => logger
-                .MinimumLevel.Debug()
+                .MinimumLevel.Information()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("System", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
@@ -83,7 +84,8 @@ namespace TokenService
             EnforceHttpsConnectionsOnly(app);
 
             app.UseLogRetrieval().WithSecret(Configuration.GetValue<string>("LogRetrieval:Secret"));
-
+            app.UseSerilogRequestLogging();
+            
             app.UseStaticFiles();
             
             app.UseRouting();

@@ -36,7 +36,7 @@ namespace WebTrest
                 logger.MinimumLevel.Debug();
                 logger.Enrich.FromLogContext();
             });
-            services.AddCapWebTokenService("webCapWeb", "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM");
+            services.AddCapWebTokenService("CapWeb", "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM");
             services.AddLogRetrieval();
         }
 
