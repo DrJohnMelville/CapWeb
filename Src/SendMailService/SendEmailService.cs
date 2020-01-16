@@ -49,7 +49,7 @@ namespace SendMailService
     private MimeMessage CreateMimeMessage(string email, string subject, string htmlMessage)
     {
       var mimeMessage = new MimeMessage();
-      mimeMessage.From.Add(new MailboxAddress("SourceNamw", SourceAccount));
+      mimeMessage.From.Add(new MailboxAddress(SourceName, SourceAccount));
       mimeMessage.To.Add(new MailboxAddress(email));
       mimeMessage.Subject = subject;
       mimeMessage.Body = new TextPart("html"){Text = htmlMessage};
