@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using SendMailService;
 using TokenService.Models;
-using TokenService.Services.EmailServices;
 
 namespace IdentityServer4.Quickstart.UI
 {

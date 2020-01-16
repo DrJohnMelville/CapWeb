@@ -14,10 +14,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SendMailService;
 using Serilog;
 using Serilog.Events;
 using TokenService.Configuration;
-using TokenService.Services.EmailServices;
 
 namespace TokenService
 {
@@ -51,9 +51,9 @@ namespace TokenService
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-
-            services.AddTransient<ISendEmailService, SendEmailService>();
-            services.AddTransient<IPasswordResetNotificationSender, PasswordResetNotificationSender>();
+     
+            services.AddSendEmailService();
+           services.AddTransient<IPasswordResetNotificationSender, PasswordResetNotificationSender>();
             services.AddTokenServer();
 
             services.AddAuthorization(options => options.AddPolicy("Administrator",

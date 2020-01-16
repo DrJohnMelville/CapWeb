@@ -3,19 +3,17 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Binder;
 using Microsoft.Extensions.Logging;
 using MimeKit;
 
-namespace TokenService.Services.EmailServices
+namespace SendMailService
 {
-  public interface ISendEmailService
-  {
-    Task SendEmail(string emailAddress, string subject, string htmlBody);
-  }
   public sealed class SendEmailService:ISendEmailService
   {
     // config Data
     public string SourceAccount { get; set; } = "";
+    public string SourceName { get; set; } = "CapWeb Account Robot";
     public string SmtpServer { get; set; } = "";
     public string Password { get; set; } = "";
     public int SmtpPort { get; set; }
@@ -31,6 +29,7 @@ namespace TokenService.Services.EmailServices
     public Task SendEmail(string emailAddress, string subject, string htmlBody)
     {
       log.Log(LogLevel.Information, $"Email sent to {emailAddress}: Subject");
+      log.Log(LogLevel.Trace, $"Message Text: {htmlBody}");
       return Send(CreateMimeMessage(emailAddress, subject, htmlBody));
     }
     
@@ -50,7 +49,7 @@ namespace TokenService.Services.EmailServices
     private MimeMessage CreateMimeMessage(string email, string subject, string htmlMessage)
     {
       var mimeMessage = new MimeMessage();
-      mimeMessage.From.Add(new MailboxAddress("CapWeb Account Robot", SourceAccount));
+      mimeMessage.From.Add(new MailboxAddress("SourceNamw", SourceAccount));
       mimeMessage.To.Add(new MailboxAddress(email));
       mimeMessage.Subject = subject;
       mimeMessage.Body = new TextPart("html"){Text = htmlMessage};

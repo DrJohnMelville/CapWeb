@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using TokenService.Services.EmailServices;
 
 namespace IdentityServer4.Quickstart.UI
 {
