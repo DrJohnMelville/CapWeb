@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using IdentityModel.Client;
 using IdentityModel.OidcClient;
@@ -13,6 +14,8 @@ namespace TokenServiceClient.Native
     {
       this.result = result;
     }
+
+    public String GetBearerToken() => result.AccessToken;
 
     public void AddBearerToken(HttpClient client)
     {
