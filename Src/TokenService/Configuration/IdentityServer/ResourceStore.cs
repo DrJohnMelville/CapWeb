@@ -37,13 +37,22 @@ namespace TokenService.Configuration.IdentityServer
 
         private async Task LoadContexxt()
         {
-            apiResources.Clear();
             using var db = dbFactory();
-            apiResources.AddRange((await db.ClientSites.AsNoTracking()
-                .ToListAsync())
-                .SelectMany(i=>i.ApiResource()));
-            validStore = true;
-          }
+            var resources = (await db.ClientSites.AsNoTracking()
+                    .ToListAsync())
+                .SelectMany(i=>i.ApiResource());
+            UpdateResourcesAtomic(resources);
+        }
+
+        private void UpdateResourcesAtomic(IEnumerable<ApiResource> resources)
+        {
+            lock (apiResources)
+            {
+                apiResources.Clear();
+                apiResources.AddRange(resources);
+                validStore = true;
+            }
+        }
 
         public async Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeAsync(IEnumerable<string> scopeNames)
         {

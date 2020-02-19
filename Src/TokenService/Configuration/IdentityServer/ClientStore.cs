@@ -53,11 +53,19 @@ namespace TokenService.Configuration.IdentityServer
 
         private async Task UpdateList()
         {
-            clients.Clear();
-            clients.AddRange((await databaseFactory()
-                .ClientSites.AsNoTracking().ToListAsync())
-                .SelectMany(i=>i.Clients()));
-            valid = true;
+            FillClientsAtomic((await databaseFactory()
+                    .ClientSites.AsNoTracking().ToListAsync())
+                .SelectMany(i => i.Clients()));
+        }
+
+        private void FillClientsAtomic(IEnumerable<Client> newClients)
+        {
+            lock (clients)
+            {
+                clients.Clear();
+                clients.AddRange(newClients);
+                valid = true;
+            }
         }
     }
 }
