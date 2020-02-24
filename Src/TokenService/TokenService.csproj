@@ -22,7 +22,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Migrations" />
-    <Folder Include="Services\EmailServices" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Melville.AspNetCoreLocalLog\Melville.AspNetCoreLocalLog.csproj" />

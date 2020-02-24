@@ -44,7 +44,7 @@ namespace TokenServiceTest.Data
             Assert.Equal(new []{"https://www.Capp.Example.Com/signin-oidc", "http://127.0.0.1"}, client.RedirectUris);
             Assert.Equal("https://www.Capp.Example.Com/signout-oidc", client.FrontChannelLogoutUri);
             Assert.Equal("https://www.Capp.Example.Com/signout-callback-oidc", client.PostLogoutRedirectUris.First());
-            Assert.Equal(new[] { "openid", "profile", "apiCApp" }, client.AllowedScopes);
+            Assert.Equal(new[] { "openid", "profile", "apiCApp", "offline_access" }, client.AllowedScopes);
         }
 
         [Fact]
