@@ -35,8 +35,11 @@ namespace SendMailService
     
     private async Task Send(MimeMessage mimeMessage)
     {
-      using var client = new SmtpClient 
-        {ServerCertificateValidationCallback = AcceptAnySSLCertificate};
+      using var client = new SmtpClient
+      {
+        ServerCertificateValidationCallback = AcceptAnySSLCertificate,
+        CheckCertificateRevocation = false
+      };
       await client.ConnectAsync(SmtpServer, SmtpPort, true);
       await client.AuthenticateAsync(SourceAccount, Password);
       await client.SendAsync(mimeMessage);
