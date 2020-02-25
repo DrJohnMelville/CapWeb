@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
 using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
 using Org.BouncyCastle.Ocsp;
 using TokenService.Data.UserPriviliges;
@@ -52,7 +53,8 @@ namespace TokenService.Data.ClientData
                 RedirectUris = AddLoopback(ExpandUriExtensions(RedirectExtenstions)),
                 FrontChannelLogoutUri = ExpandUriExtension(FrontChannelLogoutExtension),
                 PostLogoutRedirectUris = ExpandUriExtensions(PostLogoutRedirectExtensions),
-                AllowedScopes = BuildScopes()
+                AllowedScopes = BuildScopes(),
+                AllowOfflineAccess = true
             };
         }
 
@@ -74,6 +76,8 @@ namespace TokenService.Data.ClientData
                 {
                     ret.Add(api.Name);
                 }
+
+                ret.Add(IdentityServerConstants.StandardScopes.OfflineAccess);
             return ret;
         }
 
