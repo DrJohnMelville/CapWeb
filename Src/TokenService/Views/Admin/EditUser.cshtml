@@ -28,23 +28,40 @@
                         <label asp-for="Email"></label>
                         <input class="form-control" placeholder="Email" asp-for="Email" type="email">
                     </div>
-                    @for (int i = 0; i < Model.Sites.Length; i++)
-                    {
-                        <div class="form-group">
-                            <label>@Model.Sites[i].DisplayName</label>
-                            <input type="hidden" asp-for="Sites[i].DisplayName"/>
-                            <input type="hidden" asp-for="Sites[i].PrivateName"/>
-                             <input type="radio" asp-for="Sites[i].Privilege" value="@SitePrivilege.None" />No Access &nbsp;&nbsp;
-                             <input type="radio" asp-for="Sites[i].Privilege" value="@SitePrivilege.User" />User &nbsp;&nbsp;
-                             <input type="radio" asp-for="Sites[i].Privilege" value="@SitePrivilege.Administrator" />Administrator 
-                        </div>
-                    }
+  
+                    <div class="form-group">
+                         <table>
+                            <tr><th>Site</th><th>No Access</th><th>User</th><th>Administrator</th></tr>
+                            @for (int i = 0; i < Model.Sites.Length; i++)
+                            {
+                              <tr>
+                                <td>
+                                    <label>@Model.Sites[i].DisplayName</label>
+                                    <input type="hidden" asp-for="Sites[i].DisplayName"/>
+                                    <input type="hidden" asp-for="Sites[i].PrivateName"/>
+                                </td>
+                                <td><input type="radio" asp-for="Sites[i].Privilege" value="@SitePrivilege.None"/></td>
+                                <td><input type="radio" asp-for="Sites[i].Privilege" value="@SitePrivilege.User"/></td>
+                                <td><input type="radio" asp-for="Sites[i].Privilege" value="@SitePrivilege.Administrator" /></td>
+                              </tr>
+                            }
+                        </table>
+                     </div>
                     <div class="form-group">
                         <button class="btn btn-primary" name="button" value="Update">Update User</button>
                         <button class="btn btn-primary" name="button" value="Delete">Delete User</button>
-                         <button class="btn btn-primary" name="button" value="Impersonate">Impersonate User</button>
-                      </div>
+                        <button class="btn btn-primary" name="button" value="Impersonate">Impersonate User</button>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewPassword">Force New Password</label>
+                        <input class="form-control" placeholder="" asp-for="NewPassword">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" name="button" value="PasswordReset">Reset Password</button>
+                    </div>
                 </fieldset>
+                
+               
             </form>
         </div>
     </div>

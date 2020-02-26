@@ -121,8 +121,26 @@ namespace TokenService.Controllers.Admin
                 case "NoDelete": return Task.FromResult((IActionResult)View(model));
                 case "YesDelete": return DeleteUser(model);
                 case "Impersonate": return ImpersonateUser(model);
+                case "PasswordReset": return TryPasswordReset(model);
             }
             throw new InvalidOperationException("Invalid Button");
+        }
+
+        private async Task<IActionResult> TryPasswordReset(EditUserModel model)
+        {
+            if (!string.IsNullOrWhiteSpace(model.NewPassword))
+            {
+                await HandlePasswordReset(model);
+            }
+            return View(model);
+        }
+
+        private async Task HandlePasswordReset(EditUserModel model)
+        {
+            var user = await userManager.FindByIdAsync(model.Id);
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            await userManager.ResetPasswordAsync(user, token, model.NewPassword);
+            model.NewPassword = "";
         }
 
         private async Task<IActionResult> ImpersonateUser(EditUserModel model)
@@ -190,6 +208,7 @@ namespace TokenService.Controllers.Admin
         public string Email { get; set; } = "";
         [Required]
         public string FullName { get; set; } = "";
+        public string? NewPassword { get; set; }
 
         public WebsiteInformation[] Sites { get; set; } = Array.Empty<WebsiteInformation>();
     }
