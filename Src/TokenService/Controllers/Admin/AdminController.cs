@@ -25,13 +25,15 @@ namespace TokenService.Controllers.Admin
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IPasswordResetNotificationSender emailSender;
+        private readonly SignInManager<ApplicationUser> signInManager;
 
         public AdminController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, 
-            IPasswordResetNotificationSender emailSender)
+            IPasswordResetNotificationSender emailSender, SignInManager<ApplicationUser> signInManager)
         {
             this.db = db;
             this.userManager = userManager;
             this.emailSender = emailSender;
+            this.signInManager = signInManager;
         }
 
         // GET
@@ -118,8 +120,17 @@ namespace TokenService.Controllers.Admin
                 case "Delete": return Task.FromResult((IActionResult)View("DeleteConfirm", model));
                 case "NoDelete": return Task.FromResult((IActionResult)View(model));
                 case "YesDelete": return DeleteUser(model);
+                case "Impersonate": return ImpersonateUser(model);
             }
             throw new InvalidOperationException("Invalid Button");
+        }
+
+        private async Task<IActionResult> ImpersonateUser(EditUserModel model)
+        {
+            var user = await userManager.FindByIdAsync(model.Id);
+            await signInManager.SignOutAsync();
+            await signInManager.SignInAsync(user, false);
+            return Redirect("/");
         }
 
         private async Task<IActionResult> DeleteUser(EditUserModel model)
