@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using AspNetCoreLocalLog.EmailExceptions;
 using AspNetCoreLocalLog.LogSink;
 using IdentityServer4.Quickstart.UI;
 using TokenService.Data;
@@ -45,6 +46,7 @@ namespace TokenService
                 .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
                 .Enrich.FromLogContext()
             );
+            services.AddExceptionLogger();
 
             services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("CapWebConnection"));
          
@@ -111,6 +113,8 @@ namespace TokenService
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
+
+            app.UseExceptionLogger().WithEmailTarget("johnmelville@gmail.com");
         }
     }
 }

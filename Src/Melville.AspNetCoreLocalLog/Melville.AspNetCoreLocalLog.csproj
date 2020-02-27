@@ -32,4 +32,8 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SendMailService\SendMailService.csproj" />
+    </ItemGroup>
+
 </Project>

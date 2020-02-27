@@ -78,7 +78,7 @@ td,th{
     }
 
     private Task RenderSingleLine(LogEvent line) => 
-      output.WriteAsync($"<tr><td>{line.Timestamp.LocalDateTime.ToLongTimeString()}</td><td>{line.Level}</td><td>{line.RenderMessage(formatProvider)}</td></tr>");
+      output.WriteAsync($"<tr><td>{line.Timestamp.LocalDateTime.ToLongTimeString()}</td><td>{line.Level}</td><td><pre>{line.RenderMessage(formatProvider)}</pre></td></tr>");
 
     private Task WritePageHeader() =>
       output.WriteAsync(HtmlLogHeader);
