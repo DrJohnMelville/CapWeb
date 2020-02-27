@@ -47,23 +47,31 @@ namespace AspNetCoreLocalLog.EmailExceptions
             }
             catch (Exception e)
             {
-                await HandleException(ExceptionPrinter.ExceptionToText(e, context));
+                if (IsDeployedToWeb(context))
+                {
+                    await HandleException(ExceptionPrinter.ExceptionToText(e, context), e.Message);
+                }
                 throw;
             }
         }
 
-
-        private Task HandleException(string message)
+        private static bool IsDeployedToWeb(HttpContext context)
         {
-            logger.Error(message);
-            return SendExceptionEmails(message);
+            return !context.Request.Host.ToUriComponent().Contains("localhost", StringComparison.OrdinalIgnoreCase);
         }
 
-        private async Task SendExceptionEmails(string message)
+
+        private Task HandleException(string message, string title)
+        {
+            logger.Error(message);
+            return SendExceptionEmails(message, title);
+        }
+
+        private async Task SendExceptionEmails(string message, string title)
         {
             foreach (var addr in targetEmails)
             {
-                await email.SendEmail(addr, "Exception Thrown",
+                await email.SendEmail(addr, title,
                     $"<pre>{message}</pre>");
             }
         }

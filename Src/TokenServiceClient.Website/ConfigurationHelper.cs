@@ -1,10 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace TokenServiceClient.Website
 {
@@ -31,6 +34,7 @@ namespace TokenServiceClient.Website
         private static void RegisterCookieAndOpenIdAuthentication(IServiceCollection services, string clientId,
             string clientSecret)
         {
+            
             services.AddAuthentication(opt =>
                 {
                     opt.DefaultAuthenticateScheme = "Cookies";
@@ -54,6 +58,7 @@ namespace TokenServiceClient.Website
                     options.SaveTokens = true;
                     options.AuthenticationMethod = OpenIdConnectRedirectBehavior.FormPost;
                 });
+
         }
 
         private static void RegisterAdministratorPolicy(IServiceCollection services)
