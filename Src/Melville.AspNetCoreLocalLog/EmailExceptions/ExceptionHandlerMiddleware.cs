@@ -49,11 +49,15 @@ namespace AspNetCoreLocalLog.EmailExceptions
             {
                 if (IsDeployedToWeb(context))
                 {
-                    await HandleException(ExceptionPrinter.ExceptionToText(e, context), e.Message);
+                    await HandleException(ExceptionPrinter.ExceptionToText(e, context), InnermostException(e).Message);
                 }
                 throw;
             }
         }
+
+        private Exception InnermostException(Exception ex) =>
+            ex.InnerException == null ? ex : InnermostException(ex.InnerException);
+        
 
         private static bool IsDeployedToWeb(HttpContext context)
         {
