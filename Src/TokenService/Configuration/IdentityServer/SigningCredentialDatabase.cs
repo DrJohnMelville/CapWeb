@@ -68,6 +68,7 @@ namespace TokenService.Configuration.IdentityServer
         public SigningCredentials SigningCredentials() => 
             activeCredential?.ToSigningCrendentials() ?? throw new InvalidDataException("No active credential");
         public IList<SecurityKeyInfo> VerificationKeys() => list.Select(i => i.ToSecurityKeyInfo()).ToList();
+        
         public SigningCredentialCacheUpdater(ApplicationDbContext db, IList<SigningCredentialData> list, DateTimeOffset time)
         {
             this.db = db;
@@ -96,12 +97,12 @@ namespace TokenService.Configuration.IdentityServer
             {
                 list.Remove(key);
                 db.SigningCredentials.Remove(key);
-                databaseNeedsUpdate = false;
+                databaseNeedsUpdate = true;
             }
         }
 
         private List<SigningCredentialData> ExpiredKeys() => 
-            list.Where(i=>i.EndOfGracePeriodDate() < time).ToList();
+            list.Where(i=>i.EndOfGracePeriodDate() <= time).ToList();
 
         private void ComputeActiveCredential()
         {

@@ -50,7 +50,7 @@ namespace TokenServiceTest.Configuration.IdentityServer
         [InlineData(13.9,1,14)]
         [InlineData(14,2, 16)]
         [InlineData(15,2, 16)]
-        [InlineData(16,2, 16)]
+        [InlineData(16,1, 30)]
         [InlineData(16.1,1, 30.1)]
         public async Task RollKey(double days, int keys, double nextExpiration)
         {
@@ -59,6 +59,30 @@ namespace TokenServiceTest.Configuration.IdentityServer
             var c2 = await validationStore.GetValidationKeysAsync();            
             Assert.Equal(keys, c2.Count());
             Assert.Equal(Time(nextExpiration), scd.CacheExpiresAt);
+        }
+
+        private int CredentialsInStore() => testDb.NewContext().SigningCredentials.Count();
+
+        private async Task CheckNumberOfKeysAtTime(int days, int credentialCount)
+        {
+            clock.SetupGet(i => i.UtcNow).Returns(Time(days));
+            await signingStore.GetSigningCredentialsAsync();
+            Assert.Equal(credentialCount, CredentialsInStore());
+        }
+
+        [Fact]
+        public async Task WriteInThePresenceOfARemoval()
+        {
+            Assert.Equal(0, CredentialsInStore());
+            await CheckNumberOfKeysAtTime(0, 1);
+            await CheckNumberOfKeysAtTime(1, 1);
+            await CheckNumberOfKeysAtTime(2, 1);
+            await CheckNumberOfKeysAtTime(7, 1);
+            await CheckNumberOfKeysAtTime(13, 1);
+            await CheckNumberOfKeysAtTime(14, 2);
+            await CheckNumberOfKeysAtTime(15, 2);
+            await CheckNumberOfKeysAtTime(16, 1);
+            await CheckNumberOfKeysAtTime(17, 1);
         }
     }
 }
