@@ -34,7 +34,7 @@ namespace TokenServiceClient.Website
         private static void RegisterCookieAndOpenIdAuthentication(IServiceCollection services, string clientId,
             string clientSecret)
         {
-            
+            services.AddHttpContextAccessor();
             services.AddAuthentication(opt =>
                 {
                     opt.DefaultAuthenticateScheme = "Cookies";
