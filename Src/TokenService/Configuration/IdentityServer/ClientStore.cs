@@ -42,8 +42,10 @@ namespace TokenService.Configuration.IdentityServer
                 await UpdateList();
             }
 
-            var findClientByIdAsync = clients.FirstOrDefault(i => i.ClientId.Equals(clientId, StringComparison.Ordinal));
-            return findClientByIdAsync;
+            lock(clients){
+              var findClientByIdAsync = clients.FirstOrDefault(i => i.ClientId.Equals(clientId, StringComparison.Ordinal));
+              return findClientByIdAsync;
+            }
         }
 
         public void Invalidate()
