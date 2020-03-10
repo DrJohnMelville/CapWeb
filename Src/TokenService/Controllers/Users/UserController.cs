@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.EntityFrameworkCore;
 using TokenService.Data;
 using TokenService.Models;
@@ -96,8 +97,18 @@ namespace TokenService.Controllers.Users
 
         private async Task ChangePassword(EditUserModel model)
         {
-            var user = await CurrentUserAsync();
+            if (string.IsNullOrEmpty(model.CurrentPassword))
+            {
+                ModelState.AddModelError<EditUserModel>(i=>i.CurrentPassword, "Current Password cannot be null or empty.");
+                return;
+            }
+            if (string.IsNullOrEmpty(model.Password))
+            {
+                ModelState.AddModelError<EditUserModel>(i=>i.Password, "New Password cannot be null or empty.");
+                return;
+            }
             if (!CheckPasswordsSame(model)) return;
+            var user = await CurrentUserAsync();
             HandlePasswordResetResponse(model, await userManager.ChangePasswordAsync(user, model.CurrentPassword, model.Password));
         }
 
