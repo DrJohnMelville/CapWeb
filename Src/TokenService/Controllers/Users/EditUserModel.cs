@@ -35,11 +35,13 @@ namespace TokenService.Controllers.Users
     {
         public string Site { get; }
         public SitePrivilege Privilege { get; }
+        public string Url { get; }
 
-        public WebsiteMembership(string site, SitePrivilege privilege)
+        public WebsiteMembership(string site, SitePrivilege privilege, string url)
         {
             Site = site;
             Privilege = privilege;
+            Url = url;
         }
     }
     

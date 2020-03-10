@@ -46,7 +46,7 @@ namespace TokenService.Controllers.Users
             var sub = CurrentUserClaimPrincipal().Claims.ClaimByName(JwtClaimTypes.Subject);
             editUserModel.Privileges = await 
                 dbFactory().UserPrivileges.AsNoTracking().Where(i => i.UserId == sub)
-                    .Select(i=>new WebsiteMembership(i.Site.FriendlyName, i.Privilege))
+                    .Select(i=>new WebsiteMembership(i.Site.FriendlyName, i.Privilege, i.Site.BaseUri))
                     .ToListAsync();
             return editUserModel;
         }
