@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Melville.IOC.RegisterFromServiceCollection;
 using Microsoft.IdentityModel.Logging;
 
 namespace TokenService
@@ -27,10 +28,9 @@ namespace TokenService
             
             try
             {
-                var host = CreateHostBuilder(args).Build();
-
-                TrySeedDatabase(host);
-
+                var host = CreateHostBuilder(args)
+                    .Build();
+                
                 Log.Information("Starting host...");
                 host.Run();
                 return 0;
@@ -45,23 +45,10 @@ namespace TokenService
                 Log.CloseAndFlush();
             }
         }
-
-        private static void TrySeedDatabase(IHost host)
-        {
-                SeedDatabase(host);
-        }
-        
-        private static void SeedDatabase(IHost host)
-        {
-            Log.Information("Seeding database...");
-            var config = host.Services.GetRequiredService<IConfiguration>();
-            var connectionString = config.GetConnectionString("CapWebConnection");
-            SeedData.EnsureSeedData(connectionString);
-            Log.Information("Done seeding database.");
-        }
         
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseServiceProviderFactory(new MelvilleServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
