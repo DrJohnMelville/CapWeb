@@ -24,7 +24,7 @@ namespace CallFromConsoleApp
             var client = new HttpClient();
             holder.AddBearerToken(client);
             Console.WriteLine("Access Response: "+
-                await (await client.GetAsync("https://localhost:5010/Home/MyAccess")).Content.ReadAsStringAsync()
+                await (await client.GetAsync("https://CapWeb.Drjohnmelville.com/Home/MyAccess")).Content.ReadAsStringAsync()
             );
             
             Console.WriteLine("Done");
