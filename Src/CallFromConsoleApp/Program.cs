@@ -20,7 +20,7 @@ namespace CallFromConsoleApp
                 "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM");
             await AttemptLogin(holder);
 
-            var client = holder.AuthenticatedClient();
+            var client = holder.AuthenticatedClient(); 
             Console.WriteLine("Access Response: "+
                 await (await client.GetAsync("https://CapWeb.Drjohnmelville.com/Home/MyAccess")).Content.ReadAsStringAsync()
             );

@@ -7,12 +7,13 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>0.2.0</Version>
+        <Version>0.2.1</Version>
         <Authors>John Melville, MS, MD</Authors>
         <Company>Melville Computing</Company>
         <Title>Capweb Native Client Library</Title>
         <PackageDescription>This is a library for website authentication for native clients of website
-            authenticated by CapWeb.  See the CapWebTokenHolder class.</PackageDescription>
+            authenticated by CapWeb and other OAuth2 sites.  See the CapWebTokenHolderFactory class.</PackageDescription>
+        <RepositoryUrl>https://github.com/DrJohnMelville/Melville</RepositoryUrl>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 

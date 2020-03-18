@@ -39,7 +39,7 @@ namespace TokenServiceClient.Native
         {
           HandleSuccessfulAuthentication(loginResponse.AccessToken, loginResponse.AccessTokenExpiration, 
             loginResponse.RefreshToken);
-          return false;
+          return true;
         }
       }
       return await DoUiLogin();
