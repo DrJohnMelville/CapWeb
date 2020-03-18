@@ -8,53 +8,57 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Win32;
 
 namespace TokenServiceClient.Native
-{
+{ 
   public sealed class CapWebTokenHolder
   {
     private readonly OidcClientOptions options;
     private readonly OidcClient client;
+    private readonly IRefreshTokenDatabase refreshTokenDatabase;
     public string AccessToken { get; private set; } = "";
-    public DateTime ExpiresAt { get; private set; }
-    public CapWebTokenHolder(OidcClientOptions options)
+    // start with a long expired, but valid expiration time so if we try to use it we will re-authentcicate
+    public DateTime ExpiresAt { get; private set; } = new DateTime(1975,07,28);
+    public CapWebTokenHolder(OidcClientOptions options, IRefreshTokenDatabase? refreshTokenDatabase = null)
     {
       this.options = options;
+      this.refreshTokenDatabase = refreshTokenDatabase ?? RefreshTokenDatabaseFactory.Create();
       client = new OidcClient(options);
     }
 
+    [Obsolete("Use AuthenticatedClient -- will automatically handle token expiration.")]
     public void AddBearerToken(HttpClient client) => client.SetBearerToken(AccessToken);
-
-    public static async Task<CapWebTokenHolder> Authenticate(string authority, string clientName, string clientSecret,
-      string desiredScopes)
+    
+    public HttpClient AuthenticatedClient(HttpMessageHandler? innerHandler = null) =>
+      new HttpClient(new AuthenticatedHttpHandler(this, innerHandler));
+    
+    public async Task<bool> LoginAsync()
     {
-      var ret = new CapWebTokenHolder(ConfigureClient(authority, clientName, clientSecret, desiredScopes));
-      await ret.LoginAsync();
-      return ret;
-    }
-
-    private async Task LoginAsync()
-    {
-      var refreshTokenDatabase = RefreshTokenDatabaseFactory.Create();
       if (refreshTokenDatabase.TryGetToken(RefreshTokenKey(), out var refreshToken))
       {
-        var ret = await client.RefreshTokenAsync(refreshToken);
-        if (!ret.IsError)
+        var loginResponse = await client.RefreshTokenAsync(refreshToken);
+        if (!loginResponse.IsError)
         {
-          AccessToken = ret.AccessToken;
-          ExpiresAt = ret.AccessTokenExpiration;
-          WriteRefreshKey(refreshTokenDatabase, ret.RefreshToken);
-          return;
+          HandleSuccessfulAuthentication(loginResponse.AccessToken, loginResponse.AccessTokenExpiration, 
+            loginResponse.RefreshToken);
+          return false;
         }
       }
-      await DoUiLogin(refreshTokenDatabase);
+      return await DoUiLogin();
     }
 
-    private async Task DoUiLogin(IRefreshTokenDatabase refreshTokenDatabase)
+    private async Task<bool> DoUiLogin()
     {
-      var ret = await client.LoginAsync();
-      if (ret.IsError) return;
-      AccessToken = ret.AccessToken;
-      ExpiresAt = ret.AccessTokenExpiration;
-      WriteRefreshKey(refreshTokenDatabase, ret.RefreshToken);
+      var loginResponse = await client.LoginAsync();
+      if (loginResponse.IsError) return false;
+      HandleSuccessfulAuthentication(loginResponse.AccessToken, loginResponse.AccessTokenExpiration, 
+        loginResponse.RefreshToken);
+      return true;
+    }
+
+    private void HandleSuccessfulAuthentication(string accessToken, DateTime tokenExpiration, string newRefreshToken)
+    {
+      AccessToken = accessToken;
+      ExpiresAt = tokenExpiration;
+      WriteRefreshKey(refreshTokenDatabase, newRefreshToken);
     }
 
     private void WriteRefreshKey(IRefreshTokenDatabase refreshTokenDatabase, string refreshToken)
@@ -68,26 +72,15 @@ namespace TokenServiceClient.Native
     private string RefreshTokenKey() => $"{options.Authority}|{options.ClientId}|{options.Scope}";
 
     #region Configuration
-    public static Task<CapWebTokenHolder> Authenticate(string clientShortName, string clientSecret) =>
-      Authenticate("https://capweb.drjohnmelville.com", "web" + clientShortName, clientSecret, "openid profile offline_access api" + clientShortName);
 
-    private static OidcClientOptions ConfigureClient(string authority, string clientId, string clientSecret,
-      string desiredScopes)
+    [Obsolete("Use CapWebTokeFactory.CreateCapWebClient")]
+    public static async Task<CapWebTokenHolder> Authenticate(string clientShortName, string clientSecret)
     {
-      var systemBrowser = new SystemBrowser();      // cannot inline because it is used twice below
-      var options = new OidcClientOptions
-      {
-        Authority = authority,
-        ClientId = clientId,
-        RedirectUri = systemBrowser.RedirectUri,
-        ClientSecret = clientSecret,
-        Scope = desiredScopes,
-        Browser = systemBrowser,
-        Flow = OidcClientOptions.AuthenticationFlow.AuthorizationCode,
-        ResponseMode = OidcClientOptions.AuthorizeResponseMode.Redirect
-      };
-      return options;
+      var ret = CapWebTokenFactory.CreateCapWebClient(clientShortName, clientSecret);
+      await ret.LoginAsync();
+      return ret;
     }
+
     #endregion
   }
 }

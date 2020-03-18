@@ -15,19 +15,30 @@ namespace CallFromConsoleApp
             Console.WriteLine("Request Token");
 
 
-
-            CapWebTokenHolder holder = await CapWebTokenHolder.Authenticate("CapWeb",
+                       
+            CapWebTokenHolder holder = CapWebTokenFactory.CreateCapWebClient("CapWeb",
                 "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM");
+            await AttemptLogin(holder);
 
-            Console.WriteLine("Token Obtained");
-
-            var client = new HttpClient();
-            holder.AddBearerToken(client);
+            var client = holder.AuthenticatedClient();
             Console.WriteLine("Access Response: "+
                 await (await client.GetAsync("https://CapWeb.Drjohnmelville.com/Home/MyAccess")).Content.ReadAsStringAsync()
             );
             
             Console.WriteLine("Done");
+        }
+
+        private static async Task AttemptLogin(CapWebTokenHolder holder)
+        {
+            if (await holder.LoginAsync())
+            {
+                Console.WriteLine("Token Obtained: " + holder.AccessToken);
+                Console.WriteLine("Token Expiration: " + holder.ExpiresAt);
+            }
+            else
+            {
+                Console.WriteLine("Login Failed");
+            }
         }
     }
 }
