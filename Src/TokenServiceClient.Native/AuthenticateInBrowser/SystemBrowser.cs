@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using IdentityModel.OidcClient.Browser;
 
-namespace TokenServiceClient.Native
+namespace TokenServiceClient.Native.AuthenticateInBrowser
 {
   public class SystemBrowser : IBrowser
   {

@@ -8,56 +8,95 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using IdentityModel.OidcClient.Browser;
 using Newtonsoft.Json;
+using TokenServiceClient.Native.AuthenticateInBrowser;
+using TokenServiceClient.Native.PersistentToken;
 using TokenServiceClient.Native.RefreshTokenDatabase;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TokenServiceClient.Native.OAuthClient
 {
-    public class OAuthClientLogin
+    public class OAuthClientLogin: ITokenSource
     {
         private readonly string baseUrl;
         private readonly string clientId;
         private readonly string clientSecret;
         private readonly SystemBrowser browser;
-        private readonly IRefreshTokenDatabase tokenDatabase;
         private readonly HttpClient web;
 
-        public OAuthClientLogin(string baseUrl, string clientId, string clientSecret,
-            IRefreshTokenDatabase? tokenDatabase = null, HttpMessageHandler? web = null)
+        public OAuthClientLogin(string baseUrl, string clientId, string clientSecret, HttpMessageHandler? web = null)
         {
             this.baseUrl = baseUrl;
             this.clientId = clientId;
             this.clientSecret = clientSecret;
             browser = new SystemBrowser();
-            this.tokenDatabase = tokenDatabase ?? RefreshTokenDatabaseFactory.Create();
             this.web = new HttpClient(web ?? new HttpClientHandler());
         }
 
-        public async Task<OAuthClientCredential> LoginAsync()
+        public string TokenDatabaseKey() => $"OAuth|{baseUrl}|{clientId}";
+
+        public async Task<AccessTokenHolder> Activate(string refreshToken)
         {
-            var result = await browser.InvokeAsync(new BrowserOptions(UserAuthenticationUrl(), "https://127.0.0.1"));
-            if (result.IsError)
+            HttpResponseMessage? msg = null;
+            if (refreshToken != "")
             {
-                throw new InvalidOperationException(result.Error);
+                msg = await TokenQuery("refresh_token", refreshToken, "refresh_token");
+                if (!msg.IsSuccessStatusCode)
+                {
+                    msg = null;
+                }
             }
 
-            var content = new FormUrlEncodedContent(new[]
+            if (msg == null)
             {
-                new KeyValuePair<string, string>("grant_type", "authorization_code"),
-                new KeyValuePair<string, string>("code", GetAuthCode(result.Response)),
+                msg = await LoginInteractiveAsync();
+            }
+            
+            ThrowIfError(!msg.IsSuccessStatusCode,
+                $"Token endpoint call failed with code: {msg.StatusCode}");
+            return await CreateCredential(msg);
+
+        }
+
+        private async Task<HttpResponseMessage> LoginInteractiveAsync()
+        {
+            var result = await browser.InvokeAsync(new BrowserOptions(UserAuthenticationUrl(), "https://127.0.0.1"));
+            ThrowIfError(result.IsError, result.Error);
+
+            return await TokenQuery("authorization_code", GetAuthCode(result.Response), "code");
+        }
+
+        private Task<HttpResponseMessage> TokenQuery(string requestType, string authCode, string codeFieldName)
+        {
+            var tokenQuery = ParseBrowserLoginResponse(requestType, authCode, codeFieldName);
+            var tokenRequest = web.PostAsync($"{baseUrl}/token", tokenQuery);
+            return tokenRequest;
+        }
+
+        private static void ThrowIfError(bool isError, string error)
+        {
+            if (isError)
+            {
+                throw new TokenAuthenticationException(error);
+            }
+        }
+
+        private static async Task<AccessTokenHolder> CreateCredential(HttpResponseMessage tokenResult)
+        {
+            var credential =
+                JsonSerializer.Deserialize<OAuth2TokenResponse>((await tokenResult.Content.ReadAsByteArrayAsync()).AsSpan());
+            return new AccessTokenHolder(credential.access_token, DateTime.Now.AddSeconds(credential.expires_in),
+                credential.refresh_token);
+        }
+
+        private FormUrlEncodedContent ParseBrowserLoginResponse(string authCodeType, string authCode, string codeFieldName)
+        {
+            return new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("grant_type", authCodeType),
+                new KeyValuePair<string, string>(codeFieldName, authCode),
                 new KeyValuePair<string, string>("client_id", clientId),
                 new KeyValuePair<string, string>("client_secret", clientSecret)
             });
-
-            var tokenResult = await web.PostAsync($"{baseUrl}/token", content);
-            if (!tokenResult.IsSuccessStatusCode)
-            {
-                throw new InvalidOperationException($"Token endpoint call failed with code: {tokenResult.StatusCode}");
-            }
-
-            var credential =  JsonSerializer.Deserialize<OAuth2TokenResponse>((await tokenResult.Content.ReadAsByteArrayAsync()).AsSpan());
-            return new OAuthClientCredential(baseUrl, clientId, clientSecret, tokenDatabase, credential.access_token,
-                credential.refresh_token, DateTime.Now.AddSeconds(credential.expires_in));
         }
 
         private string GetAuthCode(string result) => Regex.Match(result, @"code=(\S+)").Groups[1].Value;
@@ -73,27 +112,4 @@ namespace TokenServiceClient.Native.OAuthClient
             public string token_type { get; set; } = "";
         }
     }
-
-    public class OAuthClientCredential
-    {
-        private readonly string baseUrl;
-        private readonly string clientId;
-        private readonly string clientSecret;
-        public string AccessToken { get; private set; }
-        public string RefreshToken { get; private set; }
-        public DateTime NextExpiration { get; private set; }
-        private IRefreshTokenDatabase tokenDB;
-
-        public OAuthClientCredential(string baseUrl, string clientId, string clientSecret, IRefreshTokenDatabase tokenDb, string accessToken, string refreshToken, DateTime nextExpiration)
-        {
-            this.baseUrl = baseUrl;
-            this.clientId = clientId;
-            this.clientSecret = clientSecret;
-            tokenDB = tokenDb;
-            AccessToken = accessToken;
-            RefreshToken = refreshToken;
-            NextExpiration = nextExpiration;
-        }
-    }
-    
 }

@@ -4,14 +4,15 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using TokenServiceClient.Native.PersistentToken;
 
 namespace TokenServiceClient.Native
 {
     public class AuthenticatedHttpHandler: DelegatingHandler
     {
-        private readonly CapWebTokenHolder tokenHolder;
+        private readonly IPersistentAccessToken tokenHolder;
         
-        public AuthenticatedHttpHandler(CapWebTokenHolder tokenHolder, HttpMessageHandler? innerHandler = null):
+        public AuthenticatedHttpHandler(IPersistentAccessToken tokenHolder, HttpMessageHandler? innerHandler = null):
             base(innerHandler ?? new HttpClientHandler())
         {
             this.tokenHolder = tokenHolder;
@@ -20,17 +21,11 @@ namespace TokenServiceClient.Native
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, 
             CancellationToken cancellationToken)
         {
-            if (AlmostExpired())
-            {
-                await tokenHolder.LoginAsync();
-            }
-            SetAuthenticationHeader(request);
+            SetAuthenticationHeader(request, (await tokenHolder.CurrentAccessToken()).AccessToken);
             return await base.SendAsync(request, cancellationToken);
         }
 
-        private void SetAuthenticationHeader(HttpRequestMessage request) => 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenHolder.AccessToken);
-
-        private bool AlmostExpired() => tokenHolder.ExpiresAt - DateTime.Now < TimeSpan.FromSeconds(30);
+        private void SetAuthenticationHeader(HttpRequestMessage request, string token) => 
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 }

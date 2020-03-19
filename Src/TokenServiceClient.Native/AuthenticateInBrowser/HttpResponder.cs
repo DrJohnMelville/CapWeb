@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace TokenServiceClient.Native
+namespace TokenServiceClient.Native.AuthenticateInBrowser
 {
   public class HttpResponder : IAsyncDisposable
   {

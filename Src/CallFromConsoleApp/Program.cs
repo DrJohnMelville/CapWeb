@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using IdentityModel.Client;
 using IdentityModel.OidcClient;
 using TokenServiceClient.Native;
+using TokenServiceClient.Native.PersistentToken;
 
 namespace CallFromConsoleApp
 {
@@ -16,7 +17,7 @@ namespace CallFromConsoleApp
 
 
                        
-            CapWebTokenHolder holder = CapWebTokenFactory.CreateCapWebClient("CapWeb",
+            var holder = CapWebTokenFactory.CreateCapWebClient("CapWeb",
                 "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM");
             await AttemptLogin(holder);
 
@@ -28,12 +29,13 @@ namespace CallFromConsoleApp
             Console.WriteLine("Done");
         }
 
-        private static async Task AttemptLogin(CapWebTokenHolder holder)
+        private static async Task AttemptLogin(IPersistentAccessToken holder)
         {
             if (await holder.LoginAsync())
             {
-                Console.WriteLine("Token Obtained: " + holder.AccessToken);
-                Console.WriteLine("Token Expiration: " + holder.ExpiresAt);
+                var token = await holder.CurrentAccessToken();
+                Console.WriteLine("Token Obtained: " + token.AccessToken);
+                Console.WriteLine("Token Expiration: " + token.ExpiresAt);
             }
             else
             {

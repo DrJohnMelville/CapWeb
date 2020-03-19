@@ -3,17 +3,10 @@
 
 
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.SystemConsole.Themes;
 using System;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using Melville.IOC.RegisterFromServiceCollection;
+using Melville.IOC.AspNet.RegisterFromServiceCollection;
 using Microsoft.IdentityModel.Logging;
 
 namespace TokenService
