@@ -9,15 +9,15 @@ namespace TokenServiceClient.Native
         {
         }
 
-        protected TokenAuthenticationException(SerializationInfo? info, StreamingContext context) : base(info, context)
+        protected TokenAuthenticationException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
 
-        public TokenAuthenticationException(string? message) : base(message)
+        public TokenAuthenticationException(string message) : base(message)
         {
         }
 
-        public TokenAuthenticationException(string? message, Exception? innerException) : base(message, innerException)
+        public TokenAuthenticationException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }
