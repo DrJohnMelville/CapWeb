@@ -9,8 +9,12 @@ namespace TokenServiceClient.Native
 {
   public class SystemBrowser : IBrowser
   {
-    private readonly LoopbackHttpListener listener = new LoopbackHttpListener();
+    private readonly LoopbackHttpListener listener;
 
+    public SystemBrowser(int port = 0)
+    {
+      listener = new LoopbackHttpListener(port);
+    }
 
     public string RedirectUri => listener.RedirectUri;
 

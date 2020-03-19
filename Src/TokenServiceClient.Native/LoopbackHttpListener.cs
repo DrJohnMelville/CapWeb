@@ -7,13 +7,14 @@ namespace TokenServiceClient.Native
 {
   public class LoopbackHttpListener : IDisposable
   {
-    private readonly TcpListener listener = new TcpListener(IPAddress.Loopback, 0);
+    private readonly TcpListener listener;
     public int Port => ((IPEndPoint) listener.LocalEndpoint).Port;
     public string RedirectUri => $"http://127.0.0.1:{Port}";
 
         
-    public LoopbackHttpListener()
+    public LoopbackHttpListener(int port =0)
     {
+      listener = new TcpListener(IPAddress.Loopback, port);
       listener.Start();
     }
 

@@ -6,6 +6,7 @@ using IdentityModel.Client;
 using IdentityModel.OidcClient;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Win32;
+using TokenServiceClient.Native.RefreshTokenDatabase;
 
 namespace TokenServiceClient.Native
 { 
