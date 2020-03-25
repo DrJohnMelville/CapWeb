@@ -5,13 +5,13 @@
     </PropertyGroup>
     
     <PropertyGroup>
-        <Version>0.1.5</Version>
+        <Version>0.1.6</Version>
         <Authors>John Melville, MS, MD</Authors>
         <Company>Melville Computing</Company>
         <Title>Capweb Website Client Library</Title>
         <PackageDescription>This is a library for website authentication for ASP.net core websites.
         Look at the ConfigurationHelper class.</PackageDescription>
-        <RepositoryUrl>https://github.com/DrJohnMelville/Melville</RepositoryUrl>
+        <RepositoryUrl>https://github.com/DrJohnMelville/CapWeb</RepositoryUrl>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 

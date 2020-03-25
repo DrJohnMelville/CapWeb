@@ -10,13 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceClient.Website"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallFromConsoleApp", "CallFromConsoleApp\CallFromConsoleApp.csproj", "{889A81A4-879F-4CC7-B35A-C734B8E04EA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Melville.AspNetCoreLocalLog", "Melville.AspNetCoreLocalLog\Melville.AspNetCoreLocalLog.csproj", "{9EBFAEA6-FE70-4D13-8DC5-0960919ED900}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreLocalLogTest", "AspNetCoreLocalLogTest\AspNetCoreLocalLogTest.csproj", "{80161922-5575-456E-A769-B27080B7ED62}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceClient.Native", "TokenServiceClient.Native\TokenServiceClient.Native.csproj", "{E7E15C1D-E79F-4324-A02A-920BAD5BB297}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendMailService", "SendMailService\SendMailService.csproj", "{5C91ADBD-7C43-4EF0-8277-79CEAFD5A49B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,21 +38,9 @@ Global
 		{889A81A4-879F-4CC7-B35A-C734B8E04EA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{889A81A4-879F-4CC7-B35A-C734B8E04EA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{889A81A4-879F-4CC7-B35A-C734B8E04EA3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9EBFAEA6-FE70-4D13-8DC5-0960919ED900}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9EBFAEA6-FE70-4D13-8DC5-0960919ED900}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9EBFAEA6-FE70-4D13-8DC5-0960919ED900}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9EBFAEA6-FE70-4D13-8DC5-0960919ED900}.Release|Any CPU.Build.0 = Release|Any CPU
-		{80161922-5575-456E-A769-B27080B7ED62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{80161922-5575-456E-A769-B27080B7ED62}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{80161922-5575-456E-A769-B27080B7ED62}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{80161922-5575-456E-A769-B27080B7ED62}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E7E15C1D-E79F-4324-A02A-920BAD5BB297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E7E15C1D-E79F-4324-A02A-920BAD5BB297}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7E15C1D-E79F-4324-A02A-920BAD5BB297}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7E15C1D-E79F-4324-A02A-920BAD5BB297}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5C91ADBD-7C43-4EF0-8277-79CEAFD5A49B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5C91ADBD-7C43-4EF0-8277-79CEAFD5A49B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5C91ADBD-7C43-4EF0-8277-79CEAFD5A49B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5C91ADBD-7C43-4EF0-8277-79CEAFD5A49B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
