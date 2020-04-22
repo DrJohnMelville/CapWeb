@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
 using System.Net.Http;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using IdentityModel.OidcClient.Browser;
-using Newtonsoft.Json;
 using TokenServiceClient.Native.AuthenticateInBrowser;
 using TokenServiceClient.Native.PersistentToken;
-using TokenServiceClient.Native.RefreshTokenDatabase;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TokenServiceClient.Native.OAuthClient

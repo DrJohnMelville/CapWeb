@@ -185,6 +185,10 @@ namespace TokenService.Controllers.Admin
             var claims = await userManager.GetClaimsAsync(user);
             await AddOrReplaceClaim(claims, JwtClaimTypes.Name, model.FullName, user);
             await AddOrReplaceClaim(claims, JwtClaimTypes.Email, model.Email, user);
+            user.Email = model.Email;
+            user.UserName = model.Email;
+            user.NormalizedUserName = model.Email.ToUpper();
+            await userManager.UpdateAsync(user);
         }
 
         private ValueTask AddOrReplaceClaim(IList<Claim> claims, string claimType, string value, 
