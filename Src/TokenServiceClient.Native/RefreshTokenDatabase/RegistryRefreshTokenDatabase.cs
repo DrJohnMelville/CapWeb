@@ -1,10 +1,11 @@
-﻿using Microsoft.Win32;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Win32;
 
 namespace TokenServiceClient.Native.RefreshTokenDatabase
 {
     public class RegistryRefreshTokenDatabase: IRefreshTokenDatabase
     {
-        public bool TryGetToken(string key, out string? token)
+        public bool TryGetToken(string key, [NotNullWhen(true)]out string? token)
         {
             using var registry = OpenRegistryKey();
             token = registry.GetValue(key) as string;

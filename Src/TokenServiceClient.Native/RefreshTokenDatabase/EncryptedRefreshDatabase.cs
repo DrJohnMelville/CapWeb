@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.DataProtection;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace TokenServiceClient.Native.RefreshTokenDatabase
 {
@@ -15,7 +16,7 @@ namespace TokenServiceClient.Native.RefreshTokenDatabase
             this.innerDatabase = innerDatabase;
         }
 
-        public bool TryGetToken(string key, out string? token)
+        public bool TryGetToken(string key, [NotNullWhen(true)]out string? token)
         {
             if (innerDatabase.TryGetToken(key, out token))
             {
