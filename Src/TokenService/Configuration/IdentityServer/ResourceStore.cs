@@ -54,22 +54,28 @@ namespace TokenService.Configuration.IdentityServer
             }
         }
 
-        public async Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeAsync(IEnumerable<string> scopeNames)
+        public async Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeNameAsync(IEnumerable<string> scopeNames)
         {
             await EnsureValid();
-            return await store.FindIdentityResourcesByScopeAsync(scopeNames);
+            return await store.FindIdentityResourcesByScopeNameAsync(scopeNames);
         }
 
-        public async Task<IEnumerable<ApiResource>> FindApiResourcesByScopeAsync(IEnumerable<string> scopeNames)
+        public async Task<IEnumerable<ApiResource>> FindApiResourcesByScopeNameAsync(IEnumerable<string> scopeNames)
         {
             await EnsureValid();
-            return await store.FindApiResourcesByScopeAsync(scopeNames);
+            return await store.FindApiResourcesByScopeNameAsync(scopeNames);
         }
 
-        public async Task<ApiResource> FindApiResourceAsync(string name)
+        public async Task<IEnumerable<ApiScope>> FindApiScopesByNameAsync(IEnumerable<string> scopeNames)
         {
             await EnsureValid();
-            return await store.FindApiResourceAsync(name);
+            return await store.FindApiScopesByNameAsync(scopeNames);
+        }
+
+        public async Task<IEnumerable<ApiResource>> FindApiResourcesByNameAsync(IEnumerable<string> apiResourceNames)
+        {
+            await EnsureValid();
+            return await store.FindApiResourcesByNameAsync(apiResourceNames);
         }
 
         public async Task<Resources> GetAllResourcesAsync()

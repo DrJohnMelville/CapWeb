@@ -28,7 +28,7 @@ namespace TokenService.Configuration.IdentityServer
       }
       else
       {
-        db.PersistedGrants.Add(grant);
+        await db.PersistedGrants.AddAsync(grant);
       }
       await db.SaveChangesAsync();
     }
@@ -36,23 +36,39 @@ namespace TokenService.Configuration.IdentityServer
     public Task<PersistedGrant> GetAsync(string key) =>
           db.PersistedGrants.FindAsync(key).AsTask();
 
-    public async Task<IEnumerable<PersistedGrant>> GetAllAsync(string subjectId) =>
-      await db.PersistedGrants.AsNoTracking().Where(i => i.SubjectId == subjectId).ToListAsync();
- 
-    public  Task RemoveAsync(string key) => InnerRemove(i => i.Key == key);
-
-    private async Task InnerRemove(Expression<Func<PersistedGrant, bool>> predicate)
+   public async Task<IEnumerable<PersistedGrant>> GetAllAsync(PersistedGrantFilter filter)
     {
-      var items = await db.PersistedGrants.Where(predicate).ToListAsync();
-      db.PersistedGrants.RemoveRange(items);
+      return await db.PersistedGrants.AsNoTracking().Filter(filter).ToListAsync();
+    }
+
+    public Task RemoveAllAsync(PersistedGrantFilter filter)
+    {
+      return InnerRemoveList(db.PersistedGrants.Filter(filter));
+    }
+
+    public  Task RemoveAsync(string key) => InnerRemoveList(db.PersistedGrants.Where(i => i.Key == key));
+
+    private async Task InnerRemoveList(IQueryable<PersistedGrant> listTask)
+    {
+      db.PersistedGrants.RemoveRange(await listTask.ToListAsync());
       await db.SaveChangesAsync();
     }
 
-    public Task RemoveAllAsync(string subjectId, string clientId) =>
-      InnerRemove(i => i.ClientId == clientId && i.SubjectId == subjectId);
+    
+  }
 
+  public static class PersistedGrantFilterOperation
+  {
+    public static IQueryable<PersistedGrant> Filter(this IQueryable<PersistedGrant> query, PersistedGrantFilter filter) =>
+      query
+        .FilterIfNotWhitespace(filter.ClientId, i=>i.ClientId)
+        .FilterIfNotWhitespace(filter.SessionId, i=>i.SessionId)
+        .FilterIfNotWhitespace(filter.SubjectId, i=>i.SubjectId)
+        .FilterIfNotWhitespace(filter.Type, i=>i.Type);
 
-    public Task RemoveAllAsync(string subjectId, string clientId, string type) =>
-      InnerRemove(i => i.ClientId == clientId && i.SubjectId == subjectId && i.Type == type);
+    public static IQueryable<T> FilterIfNotWhitespace<T>(this IQueryable<T> source, string? key,
+      Func<T, string> accessor) =>
+      String.IsNullOrWhiteSpace(key) ? source : source.Where(i => key.Equals(accessor(i)));
+
   }
 }
