@@ -3,15 +3,13 @@
 
 
 using AspNetCoreLocalLog.EmailExceptions;
-using AspNetCoreLocalLog.LogSink;
+using AspNetCoreLocalLog.HubLog;
 using IdentityServer4.Quickstart.UI;
 using TokenService.Data;
 using TokenService.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,16 +34,9 @@ namespace TokenService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddLogRetrieval();
+            services.AddLoggingHub();
             IisConfiguration(services);
             
-            services.AddSerilogLogger(logger => logger
-                .MinimumLevel.Information()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .MinimumLevel.Override("System", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-            );
             services.AddExceptionLogger();
 
             services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("CapWebConnection"));
@@ -85,7 +76,6 @@ namespace TokenService
 
             EnforceHttpsConnectionsOnly(app);
 
-            app.UseLogRetrieval().WithSecret(Configuration.GetValue<string>("LogRetrieval:Secret"));
             app.UseSerilogRequestLogging();
             
             app.UseStaticFiles();
@@ -97,6 +87,7 @@ namespace TokenService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute().RequireAuthorization();
+                endpoints.UseLoggingHub("Administrator");
             });
         }
 

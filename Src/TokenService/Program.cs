@@ -18,7 +18,6 @@ namespace TokenService
             #if DEBUG
             IdentityModelEventSource.ShowPII = true;
             #endif
-            
             try
             {
                 var host = CreateHostBuilder(args)
@@ -41,7 +40,7 @@ namespace TokenService
         
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseServiceProviderFactory(new MelvilleServiceProviderFactory())
+                .UseServiceProviderFactory(new MelvilleServiceProviderFactory(true))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
