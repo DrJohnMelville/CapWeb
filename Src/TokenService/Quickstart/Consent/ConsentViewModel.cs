@@ -14,7 +14,7 @@ namespace IdentityServer4.Quickstart.UI
         public string? ClientLogoUrl { get; set; }
         public bool AllowRememberConsent { get; set; }
 
-        public IEnumerable<ScopeViewModel> ResourceScopes { get; set; } = Array.Empty<ScopeViewModel>();
-        public IEnumerable<ScopeViewModel> IdentityScopes { get; set; }  = Array.Empty<ScopeViewModel>();
+        public IEnumerable<ScopeViewModel> IdentityScopes { get; set; } = Array.Empty<ScopeViewModel>();
+        public IEnumerable<ScopeViewModel> ApiScopes { get; set; }  = Array.Empty<ScopeViewModel>();
     }
 }

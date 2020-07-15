@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
-using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.EntityFrameworkCore;
 using TokenService.Data;
@@ -59,16 +58,17 @@ namespace TokenService.Configuration.IdentityServer
 
   public static class PersistedGrantFilterOperation
   {
-    public static IQueryable<PersistedGrant> Filter(this IQueryable<PersistedGrant> query, PersistedGrantFilter filter) =>
-      query
-        .FilterIfNotWhitespace(filter.ClientId, i=>i.ClientId)
-        .FilterIfNotWhitespace(filter.SessionId, i=>i.SessionId)
-        .FilterIfNotWhitespace(filter.SubjectId, i=>i.SubjectId)
-        .FilterIfNotWhitespace(filter.Type, i=>i.Type);
+    public static IQueryable<PersistedGrant> Filter(this IQueryable<PersistedGrant> query, PersistedGrantFilter filter)
+    {
+      return query
+        .FilterByIfNotWhitespace(filter.ClientId, i => i.ClientId == filter.ClientId)
+        .FilterByIfNotWhitespace(filter.SessionId, i => i.SessionId == filter.SessionId)
+        .FilterByIfNotWhitespace(filter.SubjectId, i => i.SubjectId == filter.SubjectId)
+        .FilterByIfNotWhitespace(filter.Type, i => i.Type == filter.Type);
+    }
 
-    public static IQueryable<T> FilterIfNotWhitespace<T>(this IQueryable<T> source, string? key,
-      Func<T, string> accessor) =>
-      String.IsNullOrWhiteSpace(key) ? source : source.Where(i => key.Equals(accessor(i)));
-
+    private static IQueryable<T> FilterByIfNotWhitespace<T>(this IQueryable<T> source, string? key,
+      Expression<Func<T, bool>> selector) =>
+      string.IsNullOrWhiteSpace(key) ? source : source.Where(selector);
   }
 }

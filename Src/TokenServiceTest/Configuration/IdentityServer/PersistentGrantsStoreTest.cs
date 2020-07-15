@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using IdentityServer4.Models;
+using IdentityServer4.Stores;
 using TokenService.Configuration.IdentityServer;
 using TokenServiceTest.TestTools;
 using Xunit;
@@ -76,7 +77,7 @@ namespace TokenServiceTest.Configuration.IdentityServer
     {
       var sourceGrant = DefaultGrant();
       await sut1.StoreAsync(sourceGrant);
-      var destGrant = (await sut2.GetAllAsync(sourceGrant.SubjectId)).Single();
+      var destGrant = (await sut2.GetAllAsync(new PersistedGrantFilter(){SubjectId = sourceGrant.SubjectId})).Single();
       AssertIdenticalGrant(sourceGrant, destGrant);
     }
     [Fact]
@@ -86,7 +87,7 @@ namespace TokenServiceTest.Configuration.IdentityServer
       await sut1.StoreAsync(sourceGrant);
       sourceGrant.Key = "k2";
       await sut1.StoreAsync(sourceGrant);
-      var destGrant = (await sut2.GetAllAsync(sourceGrant.SubjectId));
+      var destGrant = (await sut2.GetAllAsync(new PersistedGrantFilter(){SubjectId = sourceGrant.SubjectId}));
       Assert.Equal(2, destGrant.Count());
     }
     [Theory]
@@ -99,9 +100,9 @@ namespace TokenServiceTest.Configuration.IdentityServer
       await sut1.StoreAsync(sourceGrant);
       sourceGrant.Key = "k2";
       await sut1.StoreAsync(sourceGrant);
-      Assert.Equal(2, (await sut2.GetAllAsync(sourceGrant.SubjectId)).Count());
+      Assert.Equal(2, (await sut2.GetAllAsync(new PersistedGrantFilter(){SubjectId = sourceGrant.SubjectId})).Count());
       await sut1.RemoveAsync(delKey);
-      Assert.Equal(remaining, (await sut2.GetAllAsync(sourceGrant.SubjectId)).Count());
+      Assert.Equal(remaining, (await sut2.GetAllAsync(new PersistedGrantFilter(){SubjectId = sourceGrant.SubjectId})).Count());
     }
     [Theory]
     [InlineData("cid", "sid", 1)]
@@ -115,26 +116,9 @@ namespace TokenServiceTest.Configuration.IdentityServer
       sourceGrant.Key = "k3";
       sourceGrant.ClientId = "cid2";
       await sut1.StoreAsync(sourceGrant);
-      Assert.Equal(3, (await sut2.GetAllAsync(sourceGrant.SubjectId)).Count());
-      await sut1.RemoveAllAsync(sDelete, cDelete);
-      Assert.Equal(remaining, (await sut2.GetAllAsync(sourceGrant.SubjectId)).Count());
-    }
-
-    [Theory]
-    [InlineData("cid", "sid", 1)]
-    [InlineData("cid2", "sid", 2)]
-    public async Task RemoveAllAsync2(string cDelete, string sDelete, int remaining)
-    {
-      var sourceGrant = DefaultGrant();
-      await sut1.StoreAsync(sourceGrant);
-      sourceGrant.Key = "k2";
-      await sut1.StoreAsync(sourceGrant);
-      sourceGrant.Key = "k3";
-      sourceGrant.ClientId = "cid2";
-      await sut1.StoreAsync(sourceGrant);
-      Assert.Equal(3, (await sut2.GetAllAsync(sourceGrant.SubjectId)).Count());
-      await sut1.RemoveAllAsync(sDelete, cDelete, sourceGrant.Type);
-      Assert.Equal(remaining, (await sut2.GetAllAsync(sourceGrant.SubjectId)).Count());
+      Assert.Equal(3, (await sut2.GetAllAsync(new PersistedGrantFilter(){SubjectId = sourceGrant.SubjectId})).Count());
+      await sut1.RemoveAllAsync(new PersistedGrantFilter(){ClientId = cDelete, SubjectId = sDelete});
+      Assert.Equal(remaining, (await sut2.GetAllAsync(new PersistedGrantFilter(){SubjectId = sourceGrant.SubjectId})).Count());
     }
   }
 }
