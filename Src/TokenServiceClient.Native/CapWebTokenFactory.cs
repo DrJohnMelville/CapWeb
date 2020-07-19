@@ -11,7 +11,7 @@ namespace TokenServiceClient.Native
         public static IPersistentAccessToken CreateCapWebClient(string clientShortName, string clientSecret)
         {
             string clientName = "web" + clientShortName;
-            string desiredScopes = "openid profile offline_access api" + clientShortName;
+            string desiredScopes = "openid profile offline_access";//" api" + clientShortName;
             var ret = CreateOidcClient("https://capweb.drjohnmelville.com", clientName, clientSecret, desiredScopes);
             return ret;
         }
