@@ -12,15 +12,16 @@ namespace TokenService.Configuration.IdentityServer
 {
   public sealed class PersistentGrantsStore: IPersistedGrantStore
   {
-    private readonly ApplicationDbContext db;
+    private readonly Func<ApplicationDbContext> dbFactory;
 
-    public PersistentGrantsStore(ApplicationDbContext db)
+    public PersistentGrantsStore(Func<ApplicationDbContext> dbFactory)
     {
-      this.db = db;
+      this.dbFactory = dbFactory;
     }
 
     public async Task StoreAsync(PersistedGrant grant)
     {
+      await using var db = dbFactory();
       if ((await GetAsync(grant.Key)) != null)
       {
         db.PersistedGrants.Update(grant);
@@ -32,22 +33,33 @@ namespace TokenService.Configuration.IdentityServer
       await db.SaveChangesAsync();
     }
 
-    public Task<PersistedGrant> GetAsync(string key) =>
-          db.PersistedGrants.FindAsync(key).AsTask();
-
-   public async Task<IEnumerable<PersistedGrant>> GetAllAsync(PersistedGrantFilter filter)
+    public async Task<PersistedGrant> GetAsync(string key)
     {
+      await using var db = dbFactory();
+
+      return await db.PersistedGrants.FindAsync(key).AsTask();
+    }
+
+    public async Task<IEnumerable<PersistedGrant>> GetAllAsync(PersistedGrantFilter filter)
+    {
+      await using var db = dbFactory();
       return await db.PersistedGrants.AsNoTracking().Filter(filter).ToListAsync();
     }
 
-    public Task RemoveAllAsync(PersistedGrantFilter filter)
+    public async Task RemoveAllAsync(PersistedGrantFilter filter)
     {
-      return InnerRemoveList(db.PersistedGrants.Filter(filter));
+      await using var db = dbFactory();
+
+      await InnerRemoveList(db.PersistedGrants.Filter(filter), db);
     }
 
-    public  Task RemoveAsync(string key) => InnerRemoveList(db.PersistedGrants.Where(i => i.Key == key));
+    public async Task RemoveAsync(string key)
+    {
+      await using var db = dbFactory();
+      await InnerRemoveList(db.PersistedGrants.Where(i => i.Key == key), db);
+    }
 
-    private async Task InnerRemoveList(IQueryable<PersistedGrant> listTask)
+    private async Task InnerRemoveList(IQueryable<PersistedGrant> listTask, ApplicationDbContext db)
     {
       db.PersistedGrants.RemoveRange(await listTask.ToListAsync());
       await db.SaveChangesAsync();

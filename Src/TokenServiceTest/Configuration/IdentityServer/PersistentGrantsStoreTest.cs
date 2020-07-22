@@ -18,8 +18,8 @@ namespace TokenServiceTest.Configuration.IdentityServer
 
     public PersistentGrantsStoreTest()
     {
-      sut1 = new PersistentGrantsStore(testDb.NewContext()); 
-      sut2 = new PersistentGrantsStore(testDb.NewContext()); 
+      sut1 = new PersistentGrantsStore(()=>testDb.NewContext()); 
+      sut2 = new PersistentGrantsStore(()=>testDb.NewContext()); 
     }
 
     private PersistedGrant DefaultGrant() =>
