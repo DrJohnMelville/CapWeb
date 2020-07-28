@@ -25,7 +25,8 @@ namespace TokenService.Data.ClientData
 
         public IEnumerable<ApiResource> ApiResource()
         {
-            return new []{new ApiResource($"api{ShortName}", FriendlyName, RequiredClaims)};
+            var apiResource = new ApiResource($"api{ShortName}", FriendlyName, RequiredClaims);
+            return new [] {apiResource};
         }
 
         private static readonly string[] RequiredClaims =

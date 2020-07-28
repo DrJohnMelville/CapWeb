@@ -21,13 +21,14 @@ namespace TokenService.Configuration.IdentityServer
             new IdentityResource("profile", new []{JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Role})
         };
         private readonly List<ApiResource> apiResources = new List<ApiResource>();
+        private readonly List<ApiScope> apiScopes = new List<ApiScope>();
         private readonly Func<ApplicationDbContext> dbFactory;
         private bool validStore;
         
         public ResourceStore(Func<ApplicationDbContext> dbFactory)
         {
             this.dbFactory = dbFactory;
-            store = new InMemoryResourcesStore(identityResources, apiResources);
+            store = new InMemoryResourcesStore(identityResources, apiResources, apiScopes);
         }
 
         private ValueTask EnsureValid()
@@ -49,7 +50,9 @@ namespace TokenService.Configuration.IdentityServer
             lock (apiResources)
             {
                 apiResources.Clear();
-                apiResources.AddRange(resources);
+//                apiResources.AddRange(resources);
+                apiScopes.Clear();
+                apiScopes.AddRange(resources.Select(i=>new ApiScope(i.Name, i.UserClaims)));
                 validStore = true;
             }
         }
