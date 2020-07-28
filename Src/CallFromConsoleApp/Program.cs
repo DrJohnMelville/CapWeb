@@ -25,7 +25,7 @@ namespace CallFromConsoleApp
                 }
             };
 
-            var cred = creds[2];
+            var cred = creds[0];
 
 
                        

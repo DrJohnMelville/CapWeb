@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -48,9 +50,11 @@ namespace TokenServiceClient.Website
                 {
                     options.Authority = "https://capweb.drjohnmelville.com";
                     options.RequireHttpsMetadata = false;
+                    options.Audience = $"api{clientId}";
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateAudience = false
+                        AudienceValidator = SubstituteScopeForAudienceClaim,
+                        ValidateAudience = true,
                     };
                 })
                 .AddOpenIdConnect("oidc", options =>
@@ -65,7 +69,16 @@ namespace TokenServiceClient.Website
                 });
 
         }
-        
+
+        private static bool SubstituteScopeForAudienceClaim(IEnumerable<string> audiences, SecurityToken securitytoken, TokenValidationParameters validationparameters)
+        {
+            return securitytoken is JwtSecurityToken jwt && jwt.Claims.Any(IsRequiredScope);
+
+            bool IsRequiredScope(Claim i) =>
+                i.Type.Equals("scope", StringComparison.Ordinal) &&
+                i.Value.Equals(validationparameters.ValidAudience, StringComparison.Ordinal);
+        }
+
         private static void RegisterAdministratorPolicy(IServiceCollection services)
         {
             services.AddAuthorization(options =>
