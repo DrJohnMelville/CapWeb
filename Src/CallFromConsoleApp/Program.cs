@@ -14,16 +14,27 @@ namespace CallFromConsoleApp
         static async Task Main(string[] args)
         {
             Console.WriteLine("Request Token");
+            
+            var creds = new []
+            {
+                new
+                {
+                    Name = "CapWeb",
+                    Secret= "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM",
+                    Url = "https://localhost:5010/Home/MyAccess"
+                }
+            };
+
+            var cred = creds[2];
 
 
                        
-            var holder = CapWebTokenFactory.CreateCapWebClient("CapWeb",
-                "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM");
+            var holder = CapWebTokenFactory.CreateCapWebClient(cred.Name, cred.Secret);
             await AttemptLogin(holder);
 
             var client = holder.AuthenticatedClient(); 
-            Console.WriteLine("Access Response: "+
-                await (await client.GetAsync("https://CapWeb.Drjohnmelville.com/Home/MyAccess")).Content.ReadAsStringAsync()
+            Console.WriteLine("Access Response: ["+
+                await (await client.GetAsync(cred.Url)).Content.ReadAsStringAsync() + "]"
             );
             
             Console.WriteLine("Done");

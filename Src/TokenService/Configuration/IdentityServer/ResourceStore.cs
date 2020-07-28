@@ -50,7 +50,7 @@ namespace TokenService.Configuration.IdentityServer
             lock (apiResources)
             {
                 apiResources.Clear();
-//                apiResources.AddRange(resources);
+                apiResources.AddRange(resources);
                 apiScopes.Clear();
                 apiScopes.AddRange(resources.Select(i=>new ApiScope(i.Name, i.UserClaims)));
                 validStore = true;

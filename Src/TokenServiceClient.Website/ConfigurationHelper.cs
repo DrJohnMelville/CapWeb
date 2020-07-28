@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 
 namespace TokenServiceClient.Website
 {
@@ -46,7 +48,10 @@ namespace TokenServiceClient.Website
                 {
                     options.Authority = "https://capweb.drjohnmelville.com";
                     options.RequireHttpsMetadata = false;
-                    options.Audience = "api"+clientId;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false
+                    };
                 })
                 .AddOpenIdConnect("oidc", options =>
                 {
@@ -60,7 +65,7 @@ namespace TokenServiceClient.Website
                 });
 
         }
-
+        
         private static void RegisterAdministratorPolicy(IServiceCollection services)
         {
             services.AddAuthorization(options =>
