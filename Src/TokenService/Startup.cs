@@ -2,12 +2,14 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using System.IO;
 using AspNetCoreLocalLog.EmailExceptions;
 using AspNetCoreLocalLog.HubLog;
 using IdentityServer4.Quickstart.UI;
 using TokenService.Data;
 using TokenService.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -49,6 +51,11 @@ namespace TokenService
            services.AddTransient<IPasswordResetNotificationSender, PasswordResetNotificationSender>();
             services.AddTokenServer();
 
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.ContentRootPath,
+                    "DataProtectionKeys")));
+
+            
             services.AddAuthorization(options => options.AddPolicy("Administrator",
                 pb => pb.RequireClaim("email", "johnmelville@gmail.com")));
         }
