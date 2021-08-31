@@ -23,11 +23,11 @@ namespace IdentityServer4.Quickstart.UI
         {
             this.userManager = userManager;
             this.emailSender = emailSender;
-            request = context.HttpContext.Request;
+            request = context.HttpContext!.Request;
         }
 
         
-        public async Task SendPasswordResetEmail(ApplicationUser user, string subject,
+        public async Task SendPasswordResetEmail(ApplicationUser? user, string subject,
             Func<string, string, string> bodyText)
         {
             if (user != null && await EmailMessageForUser(user, bodyText) is {} resetMessage)

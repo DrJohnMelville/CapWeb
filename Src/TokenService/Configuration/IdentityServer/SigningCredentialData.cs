@@ -26,10 +26,10 @@ namespace TokenService.Configuration.IdentityServer
         
         public void ReadRsaParameters(RSAParameters source)
         {
-            Exponent = source.Exponent;
-            Modulus = source.Modulus;
-            P = source.P;
-            Q = source.Q;
+            Exponent = source.Exponent!;
+            Modulus = source.Modulus!;
+            P = source.P!;
+            Q = source.Q!;
         }
 
         #region RoundTripWithRsaParameters

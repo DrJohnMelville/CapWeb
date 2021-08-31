@@ -44,7 +44,7 @@ namespace TokenService.Configuration.IdentityServer
 
             lock(clients){
               var findClientByIdAsync = clients.FirstOrDefault(i => i.ClientId.Equals(clientId, StringComparison.Ordinal));
-              return findClientByIdAsync;
+              return findClientByIdAsync!;
             }
         }
 

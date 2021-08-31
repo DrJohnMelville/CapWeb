@@ -51,7 +51,7 @@ namespace TokenService.Controllers.Users
             return editUserModel;
         }
 
-        private ClaimsPrincipal CurrentUserClaimPrincipal() => contextFactory.HttpContext.User;
+        private ClaimsPrincipal CurrentUserClaimPrincipal() => contextFactory.HttpContext!.User;
 
         [HttpPost]
         public async Task<IActionResult> Index(EditUserModel model, string button)

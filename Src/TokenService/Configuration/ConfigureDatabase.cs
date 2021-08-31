@@ -14,7 +14,7 @@ namespace TokenService.Configuration
                 options.UseSqlServer(connectionString));
 
             services.AddSingleton<Func<ApplicationDbContext>>(provider => ()=>
-                provider.CreateScope().ServiceProvider.GetService<ApplicationDbContext>());
+                provider.CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>());
 
         }
     }

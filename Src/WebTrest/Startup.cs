@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using AspNetCoreLocalLog.LogSink;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,13 +30,7 @@ namespace WebTrest
         {
             IdentityModelEventSource.ShowPII = true;
             services.AddControllersWithViews();
-            services.AddSerilogLogger(logger =>
-            {
-                logger.MinimumLevel.Debug();
-                logger.Enrich.FromLogContext();
-            });
             services.AddCapWebTokenService("CapWeb", "7v0ehQkQOsWuzx9bT7hcQludASvUFcD5l5JEdkNDPaM");
-            services.AddLogRetrieval();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,7 +49,6 @@ namespace WebTrest
             }
 
             app.UseHttpsRedirection();
-            app.UseLogRetrieval().WithSecret("TeadyBear");
             app.UseSerilogRequestLogging();
             app.UseStaticFiles();
 

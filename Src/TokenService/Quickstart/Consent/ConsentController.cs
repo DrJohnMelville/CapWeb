@@ -69,7 +69,7 @@ namespace IdentityServer4.Quickstart.UI
                 {
                     // The client is native, so this change in how to
                     // return the response is for better UX for the end user.
-                    return this.LoadingPage("Redirect", result.RedirectUri);
+                    return this.LoadingPage("Redirect", result.RedirectUri!);
                 }
 
                 return Redirect(result.RedirectUri);
@@ -77,7 +77,7 @@ namespace IdentityServer4.Quickstart.UI
 
             if (result.HasValidationError)
             {
-                ModelState.AddModelError(string.Empty, result.ValidationError);
+                ModelState.AddModelError(string.Empty, result.ValidationError!);
             }
 
             if (result.ShowView)
@@ -99,7 +99,7 @@ namespace IdentityServer4.Quickstart.UI
             var request = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
             if (request == null) return result;
 
-            ConsentResponse grantedConsent = null;
+            ConsentResponse? grantedConsent = null;
 
             // user clicked 'no' - send back the standard 'access_denied' response
             if (model?.Button == "no")
@@ -147,19 +147,19 @@ namespace IdentityServer4.Quickstart.UI
                 await _interaction.GrantConsentAsync(request, grantedConsent);
 
                 // indicate that's it ok to redirect back to authorization endpoint
-                result.RedirectUri = model.ReturnUrl;
+                result.RedirectUri = model!.ReturnUrl;
                 result.Client = request.Client;
             }
             else
             {
                 // we need to redisplay the consent UI
-                result.ViewModel = await BuildViewModelAsync(model.ReturnUrl, model);
+                result.ViewModel = await BuildViewModelAsync(model!.ReturnUrl!, model);
             }
 
             return result;
         }
 
-        private async Task<ConsentViewModel> BuildViewModelAsync(string returnUrl, ConsentInputModel model = null)
+        private async Task<ConsentViewModel?> BuildViewModelAsync(string returnUrl, ConsentInputModel? model = null)
         {
             var request = await _interaction.GetAuthorizationContextAsync(returnUrl);
             if (request != null)
@@ -175,7 +175,7 @@ namespace IdentityServer4.Quickstart.UI
         }
 
         private ConsentViewModel CreateConsentViewModel(
-            ConsentInputModel model, string returnUrl,
+            ConsentInputModel? model, string returnUrl,
             AuthorizationRequest request)
         {
             var vm = new ConsentViewModel

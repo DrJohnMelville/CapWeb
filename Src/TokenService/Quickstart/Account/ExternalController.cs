@@ -97,8 +97,8 @@ namespace IdentityServer4.Quickstart.UI
 
             if (_logger.IsEnabled(LogLevel.Debug))
             {
-                var externalClaims = result.Principal.Claims.Select(c => $"{c.Type}: {c.Value}");
-                _logger.LogDebug("External claims: {@claims}", externalClaims);
+                var externalClaims = result.Principal!.Claims.Select(c => $"{c.Type}: {c.Value}");
+                _logger.LogDebug("External claims: {@claims!}", externalClaims);
             }
 
             // lookup our user and external provider info
@@ -142,7 +142,7 @@ namespace IdentityServer4.Quickstart.UI
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             // retrieve return URL
-            var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
+            var returnUrl = result.Properties?.Items["returnUrl"] ?? "~/";
 
             // check if external login is in the context of an OIDC request
             var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
@@ -182,8 +182,8 @@ namespace IdentityServer4.Quickstart.UI
                 };
 
                 var id = new ClaimsIdentity(AccountOptions.WindowsAuthenticationSchemeName);
-                id.AddClaim(new Claim(JwtClaimTypes.Subject, wp.FindFirst(ClaimTypes.PrimarySid).Value));
-                id.AddClaim(new Claim(JwtClaimTypes.Name, wp.Identity.Name));
+                id.AddClaim(new Claim(JwtClaimTypes.Subject, wp.FindFirst(ClaimTypes.PrimarySid)!.Value));
+                id.AddClaim(new Claim(JwtClaimTypes.Name, wp.Identity.Name!));
 
                 // add the groups as claims -- be careful if the number of groups is too large
                 if (AccountOptions.IncludeWindowsGroups && wp.Identity is WindowsIdentity wi)
@@ -219,7 +219,7 @@ namespace IdentityServer4.Quickstart.UI
             // try to determine the unique id of the external user (issued by the provider)
             // the most common claim type for that are the sub claim and the NameIdentifier
             // depending on the external provider, some other claim type might be used
-            var userIdClaim = externalUser.FindFirst(JwtClaimTypes.Subject) ??
+            var userIdClaim = externalUser!.FindFirst(JwtClaimTypes.Subject) ??
                               externalUser.FindFirst(ClaimTypes.NameIdentifier) ??
                               throw new Exception("Unknown userid");
 
@@ -227,13 +227,13 @@ namespace IdentityServer4.Quickstart.UI
             var claims = externalUser.Claims.ToList();
             claims.Remove(userIdClaim);
 
-            var provider = result.Properties.Items["scheme"];
+            var provider = result.Properties!.Items["scheme"];
             var providerUserId = userIdClaim.Value;
 
             // find external user
             var user = await _userManager.FindByLoginAsync(provider, providerUserId);
 
-            return (user, provider, providerUserId, claims);
+            return (user, provider, providerUserId, claims)!;
         }
 
         private async Task<ApplicationUser> AutoProvisionUserAsync(string provider, string providerUserId, IEnumerable<Claim> claims)
@@ -300,14 +300,14 @@ namespace IdentityServer4.Quickstart.UI
         {
             // if the external system sent a session id claim, copy it over
             // so we can use it for single sign-out
-            var sid = externalResult.Principal.Claims.FirstOrDefault(x => x.Type == JwtClaimTypes.SessionId);
+            var sid = externalResult.Principal?.Claims.FirstOrDefault(x => x.Type == JwtClaimTypes.SessionId);
             if (sid != null)
             {
                 localClaims.Add(new Claim(JwtClaimTypes.SessionId, sid.Value));
             }
 
             // if the external provider issued an id_token, we'll keep it for signout
-            var id_token = externalResult.Properties.GetTokenValue("id_token");
+            var id_token = externalResult.Properties?.GetTokenValue("id_token");
             if (id_token != null)
             {
                 localSignInProps.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = id_token } });

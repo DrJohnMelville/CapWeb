@@ -32,8 +32,8 @@ namespace TokenService.Configuration
             services.AddSingleton<IEnumerable<IInvalidateClients>>(d =>
                 new[]
                 {
-                    (IInvalidateClients) d.GetService<IClientStore>(),
-                    (IInvalidateClients) d.GetService<IResourceStore>(),
+                    (IInvalidateClients) d.GetRequiredService<IClientStore>(),
+                    (IInvalidateClients) d.GetRequiredService<IResourceStore>(),
                 });
 
             RegisterSigningTokenServer(services);

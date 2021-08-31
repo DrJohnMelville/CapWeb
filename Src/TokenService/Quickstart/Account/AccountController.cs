@@ -82,7 +82,7 @@ namespace IdentityServer4.Quickstart.UI
             // the user clicked the "cancel" button
             if (button != "login")
             {
-                if (context != null)
+                if (context != null && model.ReturnUrl is {} returnUrl)
                 {
                     // if the user cancels, send a result back into IdentityServer as if they 
                     // denied the consent (even if this client does not require consent).
@@ -94,10 +94,10 @@ namespace IdentityServer4.Quickstart.UI
                     {
                         // The client is native, so this change in how to
                         // return the response is for better UX for the end user.
-                        return this.LoadingPage("Redirect", model.ReturnUrl);
+                        return this.LoadingPage("Redirect", returnUrl);
                     }
 
-                    return Redirect(model.ReturnUrl);
+                    return Redirect(returnUrl);
                 }
                 else
                 {
@@ -108,6 +108,7 @@ namespace IdentityServer4.Quickstart.UI
 
             if (ModelState.IsValid)
             {
+                model.ReturnUrl ??= "~/";
                 var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberLogin, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
@@ -182,7 +183,7 @@ namespace IdentityServer4.Quickstart.UI
             // build a model so the logged out page knows what to display
             var vm = await BuildLoggedOutViewModelAsync(model.LogoutId);
 
-            if (User?.Identity.IsAuthenticated == true)
+            if (User!.Identity!.IsAuthenticated == true)
             {
                 // delete local authentication cookie
                 await signInManager.SignOutAsync();
@@ -288,7 +289,7 @@ namespace IdentityServer4.Quickstart.UI
         {
             var vm = new LogoutViewModel { LogoutId = logoutId, ShowLogoutPrompt = AccountOptions.ShowLogoutPrompt };
 
-            if (User?.Identity.IsAuthenticated != true)
+            if (User?.Identity!.IsAuthenticated != true)
             {
                 // if the user is not authenticated, then just show logged out page
                 vm.ShowLogoutPrompt = false;
@@ -322,7 +323,7 @@ namespace IdentityServer4.Quickstart.UI
                 LogoutId = logoutId
             };
 
-            if (User?.Identity.IsAuthenticated == true)
+            if (User?.Identity!.IsAuthenticated == true)
             {
                 var idp = User.FindFirst(JwtClaimTypes.IdentityProvider)?.Value;
                 if (idp != null && idp != IdentityServer4.IdentityServerConstants.LocalIdentityProvider)

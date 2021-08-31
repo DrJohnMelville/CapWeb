@@ -84,7 +84,7 @@ namespace IdentityServer4.Quickstart.UI.Device
             var request = await _interaction.GetAuthorizationContextAsync(model.UserCode);
             if (request == null) return result;
 
-            ConsentResponse grantedConsent = null;
+            ConsentResponse? grantedConsent = null;
 
             // user clicked 'no' - send back the standard 'access_denied' response
             if (model.Button == "no")
@@ -138,13 +138,13 @@ namespace IdentityServer4.Quickstart.UI.Device
             else
             {
                 // we need to redisplay the consent UI
-                result.ViewModel = await BuildViewModelAsync(model.UserCode, model);
+                result.ViewModel = await BuildViewModelAsync(model.UserCode!, model);
             }
 
             return result;
         }
 
-        private async Task<DeviceAuthorizationViewModel> BuildViewModelAsync(string userCode, DeviceAuthorizationInputModel model = null)
+        private async Task<DeviceAuthorizationViewModel?> BuildViewModelAsync(string userCode, DeviceAuthorizationInputModel? model = null)
         {
             var request = await _interaction.GetAuthorizationContextAsync(userCode);
             if (request != null)
@@ -155,7 +155,7 @@ namespace IdentityServer4.Quickstart.UI.Device
             return null;
         }
 
-        private DeviceAuthorizationViewModel CreateConsentViewModel(string userCode, DeviceAuthorizationInputModel model, DeviceFlowAuthorizationRequest request)
+        private DeviceAuthorizationViewModel CreateConsentViewModel(string userCode, DeviceAuthorizationInputModel? model, DeviceFlowAuthorizationRequest request)
         {
             var vm = new DeviceAuthorizationViewModel
             {
