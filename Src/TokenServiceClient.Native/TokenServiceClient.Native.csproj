@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <LangVersion>8</LangVersion>
+        <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
@@ -18,9 +18,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="IdentityModel.OidcClient" Version="3.1.2" />
-      <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="3.1.6" />
-      <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="3.1.6" />
-      <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
+      <PackageReference Include="IdentityModel.OidcClient" Version="4.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="5.0.10" />
+      <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="5.0.10" />
+      <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     </ItemGroup>
 </Project>

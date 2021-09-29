@@ -79,18 +79,20 @@ namespace TokenServiceClient.Native.OAuthClient
         {
             var credential =
                 JsonSerializer.Deserialize<OAuth2TokenResponse>((await tokenResult.Content.ReadAsByteArrayAsync()).AsSpan());
+            if (credential == null)
+                throw new InvalidOperationException("Failed to deserialize token response");
             return new AccessTokenHolder(credential.access_token, DateTime.Now.AddSeconds(credential.expires_in),
                 credential.refresh_token);
         }
 
         private FormUrlEncodedContent ParseBrowserLoginResponse(string authCodeType, string authCode, string codeFieldName)
         {
-            return new FormUrlEncodedContent(new[]
+            return new FormUrlEncodedContent(new KeyValuePair<string?,string?>[]
             {
-                new KeyValuePair<string, string>("grant_type", authCodeType),
-                new KeyValuePair<string, string>(codeFieldName, authCode),
-                new KeyValuePair<string, string>("client_id", clientId),
-                new KeyValuePair<string, string>("client_secret", clientSecret)
+                new ("grant_type", authCodeType),
+                new (codeFieldName, authCode),
+                new ("client_id", clientId),
+                new ("client_secret", clientSecret)
             });
         }
 

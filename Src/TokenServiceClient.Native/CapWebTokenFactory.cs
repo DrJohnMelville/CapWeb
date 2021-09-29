@@ -42,8 +42,6 @@ namespace TokenServiceClient.Native
                 ClientSecret = clientSecret,
                 Scope = desiredScopes,
                 Browser = systemBrowser,
-                Flow = OidcClientOptions.AuthenticationFlow.AuthorizationCode,
-                ResponseMode = OidcClientOptions.AuthorizeResponseMode.Redirect
             };
             return options;
         }

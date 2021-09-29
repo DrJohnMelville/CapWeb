@@ -4,7 +4,6 @@ using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using IdentityModel.Client;
 using IdentityModel.OidcClient;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Win32;
 using TokenServiceClient.Native.PersistentToken;
 using TokenServiceClient.Native.RefreshTokenDatabase;
@@ -29,7 +28,8 @@ namespace TokenServiceClient.Native
         var loginResponse = await client.RefreshTokenAsync(refreshToken);
         if (!loginResponse.IsError)
         {
-          return new AccessTokenHolder(loginResponse.AccessToken, loginResponse.AccessTokenExpiration, loginResponse.RefreshToken);
+          return new AccessTokenHolder(loginResponse.AccessToken, loginResponse.AccessTokenExpiration.DateTime,
+            loginResponse.RefreshToken);
         }
       }
       return await DoUiLogin();
@@ -42,7 +42,8 @@ namespace TokenServiceClient.Native
     {
       var loginResponse = await client.LoginAsync();
       if (loginResponse.IsError) throw new TokenAuthenticationException("User login failed");
-       return new AccessTokenHolder(loginResponse.AccessToken, loginResponse.AccessTokenExpiration, loginResponse.RefreshToken);
+       return new AccessTokenHolder(loginResponse.AccessToken, loginResponse.AccessTokenExpiration.DateTime, 
+         loginResponse.RefreshToken);
     }
   }
 }

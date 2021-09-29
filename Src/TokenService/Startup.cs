@@ -94,7 +94,7 @@ namespace TokenService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute().RequireAuthorization();
-                endpoints.UseLoggingHub("Administrator");
+       //         endpoints.UseLoggingHub("Administrator");
             });
         }
 
