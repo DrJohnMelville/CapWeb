@@ -47,10 +47,10 @@ namespace AspNetCoreLocalLog.LogSink
       });
     }
 
-    private static IConfigureLogRetrieval AddLogRetrievaliddleware(IApplicationBuilder builder)
+    private static IConfigureLogRetrieval? AddLogRetrievaliddleware(IApplicationBuilder builder)
     {
       var ret = builder.ApplicationServices.GetService<LogRetrievalEndpoint>();
-      builder.Use(ret.Process);
+      if (ret != null) builder.Use(ret.Process);
       return ret;
     }
   }

@@ -16,10 +16,10 @@ namespace AspNetCoreLocalLog.EmailExceptions
             collection.AddSingleton<ExceptionHandlerMiddleware, ExceptionHandlerMiddleware>();
         }
 
-        public static IConfigureExceptionMiddleware UseExceptionLogger(this IApplicationBuilder builder)
+        public static IConfigureExceptionMiddleware? UseExceptionLogger(this IApplicationBuilder builder)
         {
             var exceptionLogger = builder.ApplicationServices.GetService<ExceptionHandlerMiddleware>();
-            builder.Use(exceptionLogger.Process);
+            if (exceptionLogger is not null) builder.Use(exceptionLogger.Process);
             return exceptionLogger;
         }
     }

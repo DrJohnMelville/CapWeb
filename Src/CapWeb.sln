@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallFromConsoleApp", "CallF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceClient.Native", "TokenServiceClient.Native\TokenServiceClient.Native.csproj", "{E7E15C1D-E79F-4324-A02A-920BAD5BB297}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Melville.AspNetCoreLocalLog", "Melville.AspNetCoreLocalLog\Melville.AspNetCoreLocalLog.csproj", "{89A9B71D-E392-4EE8-8F88-746FFBF43FCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{E7E15C1D-E79F-4324-A02A-920BAD5BB297}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7E15C1D-E79F-4324-A02A-920BAD5BB297}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7E15C1D-E79F-4324-A02A-920BAD5BB297}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89A9B71D-E392-4EE8-8F88-746FFBF43FCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89A9B71D-E392-4EE8-8F88-746FFBF43FCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89A9B71D-E392-4EE8-8F88-746FFBF43FCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89A9B71D-E392-4EE8-8F88-746FFBF43FCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
