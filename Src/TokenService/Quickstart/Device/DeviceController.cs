@@ -45,7 +45,7 @@ namespace IdentityServer4.Quickstart.UI.Device
         public async Task<IActionResult> Index()
         {
             string userCodeParamName = _options.Value.UserInteraction.DeviceVerificationUserCodeParameter;
-            string userCode = Request.Query[userCodeParamName];
+            string userCode = (Request.Query[userCodeParamName]).FirstOrDefault() ?? "";
             if (string.IsNullOrWhiteSpace(userCode)) return View("UserCodeCapture");
 
             var vm = await BuildViewModelAsync(userCode);

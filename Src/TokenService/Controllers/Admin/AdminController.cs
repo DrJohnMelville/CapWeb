@@ -76,7 +76,7 @@ namespace TokenService.Controllers.Admin
         public async Task<IActionResult> EditUser(string id)
         {
             var user = await userManager.FindByIdAsync(id);
-            var claims = await userManager.GetClaimsAsync(user);
+            var claims = await userManager.GetClaimsAsync(user ?? throw new KeyNotFoundException($"Cannot find user \"{id}\""));
             return View(await UserToModel(claims, id));
         }
 
@@ -138,7 +138,10 @@ namespace TokenService.Controllers.Admin
         private async Task HandlePasswordReset(EditUserModel model)
         {
             var user = await userManager.FindByIdAsync(model.Id);
-            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var token = await userManager.GeneratePasswordResetTokenAsync(user ??
+                throw new KeyNotFoundException($"""No user named "{model.Id}"."""));
+            if (string.IsNullOrEmpty(model.NewPassword))
+                throw new InvalidOperationException("No new password to set");
             await userManager.ResetPasswordAsync(user, token, model.NewPassword);
             model.NewPassword = "";
         }
@@ -147,13 +150,15 @@ namespace TokenService.Controllers.Admin
         {
             var user = await userManager.FindByIdAsync(model.Id);
             await signInManager.SignOutAsync();
-            await signInManager.SignInAsync(user, false);
+            await signInManager.SignInAsync(user ??
+              throw new KeyNotFoundException($"""No user named "{model.Id}"."""), false);
             return Redirect("/");
         }
 
         private async Task<IActionResult> DeleteUser(EditUserModel model)
         {
-            await userManager.DeleteAsync(await userManager.FindByIdAsync(model.Id));
+            await userManager.DeleteAsync(await userManager.FindByIdAsync(model.Id) ??
+                                          throw new KeyNotFoundException($"""No user named "{model.Id}"."""));
             return Redirect("/");
         }
 
@@ -161,7 +166,8 @@ namespace TokenService.Controllers.Admin
         {
             if (!ModelState.IsValid) return View(model);
             var user = await userManager.FindByIdAsync(model.Id);
-            await UpdateIdentityClaims(model, user);
+            await UpdateIdentityClaims(model, user ??
+                                              throw new KeyNotFoundException($"""No user named "{model.Id}"."""));
 
             var websiteClaims = await db.UserPrivileges.Where(i => i.UserId == model.Id).ToListAsync();
             foreach (var claim in websiteClaims)

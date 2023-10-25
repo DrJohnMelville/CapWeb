@@ -30,7 +30,8 @@ namespace IdentityServer4.Quickstart.UI
         public async Task SendPasswordResetEmail(ApplicationUser? user, string subject,
             Func<string, string, string> bodyText)
         {
-            if (user != null && await EmailMessageForUser(user, bodyText) is {} resetMessage)
+            if (user is not null && user.UserName is not null &&
+                await EmailMessageForUser(user, bodyText) is {} resetMessage)
             {
                 await emailSender.SendEmail(user.UserName, subject,
                     resetMessage);
@@ -40,8 +41,8 @@ namespace IdentityServer4.Quickstart.UI
         private async Task<string> EmailMessageForUser(ApplicationUser user, 
             Func<string, string, string> createMessage)
         {
-            return createMessage(user.UserName,
-                ResetTokenAsHtmlParagraphString(PasswordResetUrl(user.UserName, 
+            return createMessage(user.UserName!,
+                ResetTokenAsHtmlParagraphString(PasswordResetUrl(user.UserName!, 
                     await userManager.GeneratePasswordResetTokenAsync(user))));
         }
 

@@ -91,7 +91,7 @@ namespace TokenServiceClient.Website
         private static void RegistrClaimPrincipal(IServiceCollection services)
         {
             services.AddTransient<ClaimsPrincipal>(s =>
-                s.GetService<IHttpContextAccessor>().HttpContext.User);
+                s.GetService<IHttpContextAccessor>()?.HttpContext?.User ?? new ClaimsPrincipal());
         }
 
         public static void AddCapWebAuthentication(this IApplicationBuilder app)

@@ -113,7 +113,7 @@ namespace IdentityServer4.Quickstart.UI
                 if (result.Succeeded)
                 {
                     var user = await userManager.FindByNameAsync(model.Username);
-                    await events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
+                    await events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
 
                     if (context != null)
                     {
@@ -198,10 +198,10 @@ namespace IdentityServer4.Quickstart.UI
                 // build a return URL so the upstream provider will redirect back
                 // to us after the user has logged out. this allows us to then
                 // complete our single sign-out processing.
-                string url = Url.Action("Logout", new { logoutId = vm.LogoutId });
+                string url = Url.Action("Logout", new { logoutId = vm.LogoutId }) ?? "";
 
                 // this triggers a redirect to the external provider for sign-out
-                return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
+                return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme ?? "");
             }
 
             return View("LoggedOut", vm);
@@ -220,7 +220,7 @@ namespace IdentityServer4.Quickstart.UI
         private async Task<LoginViewModel> BuildLoginViewModelAsync(string? returnUrl)
         {
             var context = await interaction.GetAuthorizationContextAsync(returnUrl);
-            if (context?.IdP is { } currentIdp && await schemeProvider.GetSchemeAsync(context.IdP) != null)
+            if (context?.IdP is { } currentIdp && await schemeProvider.GetSchemeAsync(currentIdp) != null)
             {
                 var local = currentIdp == IdentityServer4.IdentityServerConstants.LocalIdentityProvider;
 
@@ -229,7 +229,7 @@ namespace IdentityServer4.Quickstart.UI
                 {
                     EnableLocalLogin = local,
                     ReturnUrl = returnUrl,
-                    Username = context?.LoginHint,
+                    Username = context.LoginHint ??"",
                 };
 
                 if (!local)
@@ -272,7 +272,7 @@ namespace IdentityServer4.Quickstart.UI
                 AllowRememberLogin = AccountOptions.AllowRememberLogin,
                 EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin,
                 ReturnUrl = returnUrl,
-                Username = context?.LoginHint,
+                Username = context?.LoginHint ?? "",
                 ExternalProviders = providers.ToArray()
             };
         }
@@ -360,20 +360,21 @@ namespace IdentityServer4.Quickstart.UI
         {
             if (!ModelState.IsValid) return View(model);
             
-            await emailSender.SendPasswordResetEmail(await userManager.FindByNameAsync(model.EmailAddress),
-                "Reset your password on CapWeb", CreateResetMessage);
+            if (await userManager.FindByNameAsync(model.EmailAddress) is {} user)
+            await emailSender.SendPasswordResetEmail(user,"Reset your password on CapWeb", CreateResetMessage);
             return View("ResetEmailSent", model);
         }
 
         private string CreateResetMessage(string email, string resetTokenAsHtmlParagraphString)
         {
-            return $"<p>CapWeb has received a password reset request for {email}.  If you have requested a " +
-                   "password reset, please click the reset link below.</p> " +
-                   resetTokenAsHtmlParagraphString +
-                   "If you did not request this reset, no action is necessary, as the token in this email would be" +
-                   "required to change your password.  (If the person trying to change your password can also read " +
-                   "your emails, then you have bigger problems.)  If you have questions, please send and email to " +
-                   "<a href='mailto:johnmelville@gmail.com'>John Melville.</a></p>";
+            return
+                $"""
+                 <p>CapWeb has received a password reset request for {email}.  If you have requested a password reset, 
+                 please click the reset link below.</p> {resetTokenAsHtmlParagraphString} If you did not request this reset, 
+                 no action is necessary, as the token in this email would berequired to change your password.  
+                 (If the person trying to change your password can also read your emails, then you have bigger problems.)  
+                 If you have questions, please send and email to <a href='mailto:johnmelville@gmail.com'>John Melville.</a></p>
+                 """;
         }
     }
 }

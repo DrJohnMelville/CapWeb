@@ -24,7 +24,7 @@ namespace AspNetCoreLocalLog.LogSink
       servicies.AddSingleton<LogRetrievalEndpoint>();
       servicies.AddSingleton<IRetrieveLog, RetrieveLog>();
     }
-    public static IConfigureLogRetrieval UseLogRetrieval(this IApplicationBuilder builder)
+    public static IConfigureLogRetrieval? UseLogRetrieval(this IApplicationBuilder builder)
     {
       GC.KeepAlive(builder.ApplicationServices.GetService<ILogger>()); // make sure the static is initalized
       return AddLogRetrievaliddleware(builder);
@@ -41,7 +41,8 @@ namespace AspNetCoreLocalLog.LogSink
             outputTemplate:
             "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
             theme: AnsiConsoleTheme.Literate)
-          .WriteTo.Sink(isp.GetService<VolitileSerilogSink>())
+          .WriteTo.Sink(isp.GetService<VolitileSerilogSink>()??
+                        throw new InvalidOperationException("Cannot create log sink"))
           .CreateLogger();
         return Log.Logger;
       });

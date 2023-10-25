@@ -1,18 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenService", "TokenService\TokenService.csproj", "{58C8915F-0196-47CE-96BC-D04308A1EB9F}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34009.444
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenService", "TokenService\TokenService.csproj", "{58C8915F-0196-47CE-96BC-D04308A1EB9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceTest", "TokenServiceTest\TokenServiceTest.csproj", "{6551696D-C858-4419-96B6-CA0BA2A19519}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenServiceTest", "TokenServiceTest\TokenServiceTest.csproj", "{6551696D-C858-4419-96B6-CA0BA2A19519}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTrest", "WebTrest\WebTrest.csproj", "{687BA244-8156-4079-BAC0-6278A4875DC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTrest", "WebTrest\WebTrest.csproj", "{687BA244-8156-4079-BAC0-6278A4875DC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceClient.Website", "TokenServiceClient.Website\TokenServiceClient.Website.csproj", "{52D89C39-FD57-4CE0-841F-613BAACC2962}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenServiceClient.Website", "TokenServiceClient.Website\TokenServiceClient.Website.csproj", "{52D89C39-FD57-4CE0-841F-613BAACC2962}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallFromConsoleApp", "CallFromConsoleApp\CallFromConsoleApp.csproj", "{889A81A4-879F-4CC7-B35A-C734B8E04EA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CallFromConsoleApp", "CallFromConsoleApp\CallFromConsoleApp.csproj", "{889A81A4-879F-4CC7-B35A-C734B8E04EA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenServiceClient.Native", "TokenServiceClient.Native\TokenServiceClient.Native.csproj", "{E7E15C1D-E79F-4324-A02A-920BAD5BB297}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenServiceClient.Native", "TokenServiceClient.Native\TokenServiceClient.Native.csproj", "{E7E15C1D-E79F-4324-A02A-920BAD5BB297}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Melville.AspNetCoreLocalLog", "Melville.AspNetCoreLocalLog\Melville.AspNetCoreLocalLog.csproj", "{89A9B71D-E392-4EE8-8F88-746FFBF43FCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Melville.AspNetCoreLocalLog", "Melville.AspNetCoreLocalLog\Melville.AspNetCoreLocalLog.csproj", "{89A9B71D-E392-4EE8-8F88-746FFBF43FCB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{63491F59-FE40-4EC8-9ABA-A6A39C9DA41E}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.Props = Directory.Build.Props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,5 +56,8 @@ Global
 		{89A9B71D-E392-4EE8-8F88-746FFBF43FCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89A9B71D-E392-4EE8-8F88-746FFBF43FCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89A9B71D-E392-4EE8-8F88-746FFBF43FCB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

@@ -37,7 +37,8 @@ namespace TokenService.Configuration.IdentityServer
     {
       await using var db = dbFactory();
 
-      return await db.PersistedGrants.FindAsync(key).AsTask();
+      return (await db.PersistedGrants.FindAsync(key)) ??
+             throw new KeyNotFoundException("No such grant");
     }
 
     public async Task<IEnumerable<PersistedGrant>> GetAllAsync(PersistedGrantFilter filter)

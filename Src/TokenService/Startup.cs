@@ -4,7 +4,6 @@
 
 using System.IO;
 using AspNetCoreLocalLog.EmailExceptions;
-using AspNetCoreLocalLog.HubLog;
 using IdentityServer4.Quickstart.UI;
 using TokenService.Data;
 using TokenService.Models;
@@ -36,12 +35,12 @@ namespace TokenService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddLoggingHub();
             IisConfiguration(services);
             
             services.AddExceptionLogger();
 
-            services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("CapWebConnection"));
+            services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("CapWebConnection") 
+              ?? throw new InvalidDataException("No Database Connection string"));
          
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -109,10 +108,10 @@ namespace TokenService
             if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseMigrationsEndPoint();
             }
 
-            app.UseExceptionLogger().WithEmailTarget("johnmelville@gmail.com");
+       //     app.UseExceptionLogger().WithEmailTarget("johnmelville@gmail.com");
         }
     }
 }

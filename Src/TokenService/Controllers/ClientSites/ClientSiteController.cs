@@ -153,7 +153,8 @@ namespace TokenService.Controllers.ClientSites
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var clientSite = await _context.ClientSites.FindAsync(id);
-            _context.ClientSites.Remove(clientSite);
+            _context.ClientSites.Remove(clientSite ??
+                                        throw new KeyNotFoundException($"""No site named "{id}"."""));
             await _context.SaveChangesAsync();
             invalidateClients.Invalidate();
             return RedirectToAction(nameof(Index));

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Azure.Identity;
 using IdentityModel;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Http;
@@ -79,7 +81,8 @@ namespace TokenService.Controllers.Users
             await signInManager.SignInAsync(user, true, "");
         }
 
-        private Task<ApplicationUser> CurrentUserAsync() => userManager.GetUserAsync(CurrentUserClaimPrincipal());
+        private async Task<ApplicationUser> CurrentUserAsync() => await userManager.GetUserAsync(CurrentUserClaimPrincipal()) ??
+                                                            throw new KeyNotFoundException("No current user");
 
         private async Task AddOrReplaceClaim(EditUserModel model, ApplicationUser user, Claim claim)
         {

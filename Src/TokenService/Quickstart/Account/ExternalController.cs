@@ -181,26 +181,30 @@ namespace IdentityServer4.Quickstart.UI
                     }
                 };
 
-                var id = new ClaimsIdentity(AccountOptions.WindowsAuthenticationSchemeName);
-                id.AddClaim(new Claim(JwtClaimTypes.Subject, wp.FindFirst(ClaimTypes.PrimarySid)!.Value));
-                id.AddClaim(new Claim(JwtClaimTypes.Name, wp.Identity.Name!));
-
-                // add the groups as claims -- be careful if the number of groups is too large
-                if (AccountOptions.IncludeWindowsGroups && wp.Identity is WindowsIdentity wi)
+                if (OperatingSystem.IsWindows())
                 {
-                    var groups = wi.Groups?.Translate(typeof(NTAccount));
-                    var roles = groups?.Select(x => new Claim(JwtClaimTypes.Role, x.Value));
-                    if (roles != null)
+                    var id = new ClaimsIdentity(AccountOptions.WindowsAuthenticationSchemeName);
+                    id.AddClaim(new Claim(JwtClaimTypes.Subject, wp.FindFirst(ClaimTypes.PrimarySid)!.Value));
+                    id.AddClaim(new Claim(JwtClaimTypes.Name, wp.Identity.Name!));
+
+                    // add the groups as claims -- be careful if the number of groups is too large
+                    if (AccountOptions.IncludeWindowsGroups && wp.Identity is WindowsIdentity wi)
                     {
-                        id.AddClaims(roles);
+                        var groups = wi.Groups?.Translate(typeof(NTAccount));
+                        var roles = groups?.Select(x => new Claim(JwtClaimTypes.Role, x.Value));
+                        if (roles != null)
+                        {
+                            id.AddClaims(roles);
+                        }
                     }
+
+                    await HttpContext.SignInAsync(
+                        IdentityServer4.IdentityServerConstants.ExternalCookieAuthenticationScheme,
+                        new ClaimsPrincipal(id),
+                        props);
                 }
 
-                await HttpContext.SignInAsync(
-                    IdentityServer4.IdentityServerConstants.ExternalCookieAuthenticationScheme,
-                    new ClaimsPrincipal(id),
-                    props);
-                return Redirect(props.RedirectUri);
+                return Redirect(props.RedirectUri??"~/");
             }
             else
             {
@@ -231,7 +235,8 @@ namespace IdentityServer4.Quickstart.UI
             var providerUserId = userIdClaim.Value;
 
             // find external user
-            var user = await _userManager.FindByLoginAsync(provider, providerUserId);
+            var user = await _userManager.FindByLoginAsync(provider ??
+                throw new KeyNotFoundException("No provider found"), providerUserId);
 
             return (user, provider, providerUserId, claims)!;
         }
