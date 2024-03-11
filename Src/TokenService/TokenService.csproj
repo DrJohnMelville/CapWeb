@@ -6,6 +6,9 @@
     <UserSecretsId>f4297c56-a490-4321-a432-f311cd9e445f</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\WEb.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
     <PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
     <PackageReference Include="Melville.AspNetCoreLocalLog" Version="0.5.43" />
