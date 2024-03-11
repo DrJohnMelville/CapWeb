@@ -1,12 +1,12 @@
 ﻿<Project>
     <PropertyGroup>
-        <Version>0.3.1</Version>
+        <Version>0.4.0</Version>
         <Authors>John Melville, MS, MD</Authors>
         <Company>Melville Computing</Company>
         <Copyright>2021 John Melville, MS, MD</Copyright>
         <RepositoryUrl>https://github.com/DrJohnMelville/Melville</RepositoryUrl>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
-	    <TargetFramework>net7.0</TargetFramework>
+	    <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 </Project>

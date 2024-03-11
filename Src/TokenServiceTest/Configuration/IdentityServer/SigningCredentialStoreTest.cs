@@ -12,7 +12,7 @@ namespace TokenServiceTest.Configuration.IdentityServer
 {
     public class SigningCredentialStoreTest
     {
-        private readonly Mock<ISystemClock> clock = new Mock<ISystemClock>();
+        private readonly Mock<TimeProvider> clock = new();
         private readonly TestDatabase testDb = new TestDatabase();
         private readonly SigningCredentialDatabase scd;
         private readonly ISigningCredentialStore signingStore;
@@ -20,7 +20,7 @@ namespace TokenServiceTest.Configuration.IdentityServer
 
         public SigningCredentialStoreTest()
         {
-            clock.SetupGet(i => i.UtcNow).Returns(Time(0));
+            clock.Setup(i => i.GetUtcNow()).Returns(Time(0));
             scd = CreateSut();
             signingStore = new SigningCredentialStore(scd);
             validationStore = new ValidationKeysStore(scd);
@@ -55,7 +55,7 @@ namespace TokenServiceTest.Configuration.IdentityServer
         public async Task RollKey(double days, int keys, double nextExpiration)
         {
             await signingStore.GetSigningCredentialsAsync();
-            clock.SetupGet(i => i.UtcNow).Returns(Time(days));
+            clock.Setup(i => i.GetUtcNow()).Returns(Time(days));
             var c2 = await validationStore.GetValidationKeysAsync();            
             Assert.Equal(keys, c2.Count());
             Assert.Equal(Time(nextExpiration), scd.CacheExpiresAt);
@@ -65,7 +65,7 @@ namespace TokenServiceTest.Configuration.IdentityServer
 
         private async Task CheckNumberOfKeysAtTime(int days, int credentialCount)
         {
-            clock.SetupGet(i => i.UtcNow).Returns(Time(days));
+            clock.Setup(i => i.GetUtcNow()).Returns(Time(days));
             await signingStore.GetSigningCredentialsAsync();
             Assert.Equal(credentialCount, CredentialsInStore());
         }

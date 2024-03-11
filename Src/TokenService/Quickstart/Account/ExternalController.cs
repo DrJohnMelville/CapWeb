@@ -191,7 +191,12 @@ namespace IdentityServer4.Quickstart.UI
                     if (AccountOptions.IncludeWindowsGroups && wp.Identity is WindowsIdentity wi)
                     {
                         var groups = wi.Groups?.Translate(typeof(NTAccount));
+#pragma warning disable CA1416
+                        // We have to be running on windows to get a WindowsIdentity so this is safe but the
+                        // compiler does not realize that this lambda does not escape the windows exclusive
+                        // scope.
                         var roles = groups?.Select(x => new Claim(JwtClaimTypes.Role, x.Value));
+#pragma warning restore CA1416
                         if (roles != null)
                         {
                             id.AddClaims(roles);

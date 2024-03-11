@@ -14,13 +14,13 @@ namespace TokenService.Configuration.IdentityServer
     public class SigningCredentialDatabase
     {
         private readonly Func<ApplicationDbContext> dbFactory;
-        private readonly ISystemClock systemClock;
+        private readonly TimeProvider systemClock;
 
         private SigningCredentials? signingCredential;
         private IEnumerable<SecurityKeyInfo> verificationCredentials = Array.Empty<SecurityKeyInfo>();
         public DateTimeOffset CacheExpiresAt { get; private set; } = DateTime.MinValue;
 
-        public SigningCredentialDatabase(Func<ApplicationDbContext> dbFactory, ISystemClock systemClock)
+        public SigningCredentialDatabase(Func<ApplicationDbContext> dbFactory, TimeProvider systemClock)
         {
             this.dbFactory = dbFactory;
             this.systemClock = systemClock;
@@ -40,7 +40,7 @@ namespace TokenService.Configuration.IdentityServer
 
         private async Task RecomputeKeysIfNeeded()
         {
-            if (CacheExpiresAt <= systemClock.UtcNow)
+            if (CacheExpiresAt <= systemClock.GetUtcNow())
             {
                 await RecomputeKeys();
             }
@@ -50,7 +50,7 @@ namespace TokenService.Configuration.IdentityServer
         {
             await using var db = dbFactory();
             await using var keyComputer = new SigningCredentialCacheUpdater(db,
-              await db.SigningCredentials.AsNoTracking().ToListAsync(), systemClock.UtcNow);
+              await db.SigningCredentials.AsNoTracking().ToListAsync(), systemClock.GetUtcNow());
             signingCredential = keyComputer.SigningCredentials();
             verificationCredentials = keyComputer.VerificationKeys();
             CacheExpiresAt = keyComputer.NextExpiration();
