@@ -33,12 +33,11 @@ namespace TokenService.Configuration.IdentityServer
       await db.SaveChangesAsync();
     }
 
-    public async Task<PersistedGrant> GetAsync(string key)
+    public async Task<PersistedGrant?> GetAsync(string key)
     {
       await using var db = dbFactory();
 
-      return (await db.PersistedGrants.FindAsync(key)) ??
-             throw new KeyNotFoundException("No such grant");
+      return await db.PersistedGrants.FindAsync(key);
     }
 
     public async Task<IEnumerable<PersistedGrant>> GetAllAsync(PersistedGrantFilter filter)

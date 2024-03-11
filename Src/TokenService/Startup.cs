@@ -4,6 +4,7 @@
 
 using System.IO;
 using AspNetCoreLocalLog.EmailExceptions;
+using AspNetCoreLocalLog.HubLog;
 using IdentityServer4.Quickstart.UI;
 using TokenService.Data;
 using TokenService.Models;
@@ -57,6 +58,8 @@ namespace TokenService
             
             services.AddAuthorization(options => options.AddPolicy("Administrator",
                 pb => pb.RequireClaim("email", "johnmelville@gmail.com")));
+
+            services.AddTransient<ILogger, FakeLogger>();
         }
 
         private static void IisConfiguration(IServiceCollection services)
@@ -73,7 +76,7 @@ namespace TokenService
             {
                 iis.AuthenticationDisplayName = "Windows";
                 iis.AutomaticAuthentication = false;
-            });
+            }); 
         }
 
         public void Configure(IApplicationBuilder app)
@@ -93,7 +96,6 @@ namespace TokenService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute().RequireAuthorization();
-       //         endpoints.UseLoggingHub("Administrator");
             });
         }
 
@@ -111,7 +113,14 @@ namespace TokenService
                 app.UseMigrationsEndPoint();
             }
 
-       //     app.UseExceptionLogger().WithEmailTarget("johnmelville@gmail.com");
+            app.UseExceptionLogger().WithEmailTarget("johnmelville@gmail.com");
+        }
+    }
+
+    public class FakeLogger: ILogger
+    {
+        public void Write(LogEvent logEvent)
+        {
         }
     }
 }

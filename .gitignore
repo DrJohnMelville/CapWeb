@@ -5,7 +5,7 @@
 
 AppIdUsers.db
 tempkey.rsa
-
+DataProtectionKeys/
 
 # User-specific files
 *.rsuser
