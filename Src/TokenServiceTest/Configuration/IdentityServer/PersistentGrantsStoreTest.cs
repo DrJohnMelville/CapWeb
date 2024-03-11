@@ -45,7 +45,7 @@ namespace TokenServiceTest.Configuration.IdentityServer
     {
       var sourceGrant = DefaultGrant();
       await sut1.StoreAsync(sourceGrant);
-      var destGrant = await sut2.GetAsync("k1");
+      var destGrant = (await sut2.GetAsync("k1"))!;
       AssertIdenticalGrant(sourceGrant, destGrant);
     }
 
@@ -67,7 +67,7 @@ namespace TokenServiceTest.Configuration.IdentityServer
       await sut1.StoreAsync(sourceGrant);
       sourceGrant.Data = "Date2";
       await sut1.StoreAsync(sourceGrant);
-      var destGrant = await sut2.GetAsync("k1");
+      var destGrant = (await sut2.GetAsync("k1"))!;
       Assert.Equal(sourceGrant.Key, destGrant.Key);
       Assert.Equal(sourceGrant.Data, destGrant.Data);
     }
