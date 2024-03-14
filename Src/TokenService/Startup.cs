@@ -4,7 +4,7 @@
 
 using System.IO;
 using AspNetCoreLocalLog.EmailExceptions;
-using AspNetCoreLocalLog.HubLog;
+using AspNetCoreLocalLog.LogSink;
 using IdentityServer4.Quickstart.UI;
 using TokenService.Data;
 using TokenService.Models;
@@ -38,6 +38,8 @@ namespace TokenService
             services.AddControllersWithViews();
             IisConfiguration(services);
             
+            services.AddLogRetrieval();
+            services.AddSerilogLogger(null);
             services.AddExceptionLogger();
 
             services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("CapWebConnection") 
@@ -58,8 +60,6 @@ namespace TokenService
             
             services.AddAuthorization(options => options.AddPolicy("Administrator",
                 pb => pb.RequireClaim("email", "johnmelville@gmail.com")));
-
-            services.AddTransient<ILogger, FakeLogger>();
         }
 
         private static void IisConfiguration(IServiceCollection services)
@@ -81,6 +81,7 @@ namespace TokenService
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseLogRetrieval()!.WithSecret(Configuration.GetSection("LogRetrieval:Secret").Value??"");
             ShowMoreErrorsInDevelopmentEnviornment(app);
 
             EnforceHttpsConnectionsOnly(app);
@@ -114,13 +115,6 @@ namespace TokenService
             }
 
             app.UseExceptionLogger().WithEmailTarget("johnmelville@gmail.com");
-        }
-    }
-
-    public class FakeLogger: ILogger
-    {
-        public void Write(LogEvent logEvent)
-        {
         }
     }
 }

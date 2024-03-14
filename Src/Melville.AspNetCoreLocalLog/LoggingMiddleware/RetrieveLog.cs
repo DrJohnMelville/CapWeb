@@ -26,6 +26,7 @@ namespace AspNetCoreLocalLog.LoggingMiddleware
     {
       switch (command)
       {
+        case "":
         case "html":
           await WriteToHtml(output);
           return true;
