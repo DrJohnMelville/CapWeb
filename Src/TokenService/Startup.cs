@@ -114,7 +114,7 @@ namespace TokenService
                 app.UseMigrationsEndPoint();
             }
 
-            app.UseExceptionLogger().WithEmailTarget("johnmelville@gmail.com");
+            app.UseExceptionLogger()?.WithEmailTarget("johnmelville@gmail.com");
         }
     }
 }
