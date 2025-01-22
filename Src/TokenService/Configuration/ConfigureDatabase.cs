@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TokenService.Data;
@@ -11,7 +12,7 @@ namespace TokenService.Configuration
             string connectionString)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlite(connectionString));
 
             services.AddSingleton<Func<ApplicationDbContext>>(provider => ()=>
                 provider.CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>());

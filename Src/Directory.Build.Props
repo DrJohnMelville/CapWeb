@@ -7,7 +7,7 @@
         <RepositoryUrl>https://github.com/DrJohnMelville/Melville</RepositoryUrl>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
-	    <TargetFramework>net8.0</TargetFramework>
+	    <TargetFramework>net9.0</TargetFramework>
     </PropertyGroup>
 	<Target Name="CopyPackage" AfterTargets="Pack">
 		<Copy SourceFiles="$(OutputPath)..\$(PackageId).$(PackageVersion).nupkg"

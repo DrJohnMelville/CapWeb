@@ -40,7 +40,7 @@ namespace TokenService.Data
                 .OnDelete(DeleteBehavior.Cascade);
             builder.Entity<UserPrivilege>()
                 .HasOne(i => i.User).WithMany(i => i.UserPrivileges).OnDelete(DeleteBehavior.Cascade);            
-            //PatchSqLiteDateTimeOffsets(builder);
+            PatchSqLiteDateTimeOffsets(builder);
         }
 
         private void PatchSqLiteDateTimeOffsets(ModelBuilder builder)
