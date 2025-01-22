@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -72,9 +73,14 @@ namespace TokenServiceClient.Website
 
         private static bool SubstituteScopeForAudienceClaim(IEnumerable<string> audiences, SecurityToken securitytoken, TokenValidationParameters validationparameters)
         {
-            return securitytoken is JwtSecurityToken jwt && jwt.Claims.Any(IsRequiredScope);
+            return securitytoken switch
+            {
+                JwtSecurityToken jwt => jwt.Claims.Any(IsRequiredScope),
+                JsonWebToken jwt => jwt.Claims.Any(IsRequiredScope),
+                _=> false
+            };
 
-            bool IsRequiredScope(Claim i) =>
+             bool IsRequiredScope(Claim i) =>
                 i.Type.Equals("scope", StringComparison.Ordinal) &&
                 i.Value.Equals(validationparameters.ValidAudience, StringComparison.Ordinal);
         }

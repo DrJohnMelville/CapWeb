@@ -9,10 +9,6 @@ namespace TokenServiceClient.Native
         {
         }
 
-        protected TokenAuthenticationException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-
         public TokenAuthenticationException(string message) : base(message)
         {
         }
