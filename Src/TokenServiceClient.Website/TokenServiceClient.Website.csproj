@@ -12,6 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="IdentityModel.AspNetCore.OAuth2Introspection" Version="6.2.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="NuGet.Build.Tasks.Pack" Version="6.12.1">
         <PrivateAssets>all</PrivateAssets>

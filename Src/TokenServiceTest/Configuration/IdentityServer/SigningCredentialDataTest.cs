@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using System.Text;
 using TokenService.Configuration.IdentityServer;
 using Xunit;
 
@@ -28,6 +27,5 @@ namespace TokenServiceTest.Configuration.IdentityServer
             Assert.Equal(parameters.DQ, recreatedParameters.DQ);
             Assert.Equal(parameters.InverseQ, recreatedParameters.InverseQ);
         }
-       
     }
 }
