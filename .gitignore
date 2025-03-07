@@ -6,6 +6,7 @@
 AppIdUsers.db
 tempkey.rsa
 DataProtectionKeys/
+web.config
 
 # User-specific files
 *.rsuser
