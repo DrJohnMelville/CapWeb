@@ -3,9 +3,12 @@
 
 
 using System.IO;
+using System.Runtime.InteropServices;
 using AspNetCoreLocalLog.EmailExceptions;
 using AspNetCoreLocalLog.LogSink;
 using IdentityServer4.Quickstart.UI;
+using Melville.IOC.IocContainers;
+using Melville.IOC.TypeResolutionPolicy;
 using TokenService.Data;
 using TokenService.Models;
 using Microsoft.AspNetCore.Builder;
@@ -20,101 +23,92 @@ using Serilog;
 using Serilog.Events;
 using TokenService.Configuration;
 
-namespace TokenService
+namespace TokenService;
+
+public partial class Startup
 {
-    public class Startup
+    public IWebHostEnvironment Environment { get; }
+    public IConfiguration Configuration { get; }
+
+    public Startup(IWebHostEnvironment environment, IConfiguration configuration)
     {
-        public IWebHostEnvironment Environment { get; }
-        public IConfiguration Configuration { get; }
+        Environment = environment;
+        Configuration = configuration;
+    }
 
-        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
-        {
-            Environment = environment;
-            Configuration = configuration;
-        }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllersWithViews();
-            IisConfiguration(services);
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllersWithViews();
             
-            services.AddLogRetrieval();
-            services.AddSerilogLogger(null);
-            services.AddExceptionLogger();
+        services.AddLogRetrieval();
+        services.AddSerilogLogger(null);
+        services.AddExceptionLogger();
 
-            services.AddApplicationDatabaseAndFactory(Configuration.GetConnectionString("CapWebConnection") 
-              ?? throw new InvalidDataException("No Database Connection string"));
+        services.AddApplicationDatabaseAndFactory(TryConvertToLinuxPath(Configuration.GetConnectionString("CapWebConnection") 
+                                                                        ?? throw new InvalidDataException("No Database Connection string")));
          
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+        services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
      
-            services.AddSendEmailService();
-           services.AddTransient<IPasswordResetNotificationSender, PasswordResetNotificationSender>();
-            services.AddTokenServer();
+        services.AddSendEmailService();
+        services.AddTransient<IPasswordResetNotificationSender, PasswordResetNotificationSender>();
+        services.AddTokenServer();
 
-            services.AddDataProtection()
-                .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.ContentRootPath,
-                    "DataProtectionKeys")));
+        services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.ContentRootPath,
+                "DataProtectionKeys")));
 
             
-            services.AddAuthorization(options => options.AddPolicy("Administrator",
-                pb => pb.RequireClaim("email", "johnmelville@gmail.com")));
-        }
+        services.AddAuthorization(options => options.AddPolicy("Administrator",
+            pb => pb.RequireClaim("email", "johnmelville@gmail.com")));
+    }
 
-        private static void IisConfiguration(IServiceCollection services)
+    private string TryConvertToLinuxPath(string connection)
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            // configures IIS out-of-proc settings (see https://github.com/aspnet/AspNetCore/issues/14882)
-            services.Configure<IISOptions>(iis =>
-            {
-                iis.AuthenticationDisplayName = "Windows";
-                iis.AutomaticAuthentication = false;
-            });
-
-            // configures IIS in-proc settings
-            services.Configure<IISServerOptions>(iis =>
-            {
-                iis.AuthenticationDisplayName = "Windows";
-                iis.AutomaticAuthentication = false;
-            }); 
+            return connection
+                .Replace("C:\\", "/mnt/c/").Replace(@"\", "/");
         }
+        return connection;
+    }
 
-        public void Configure(IApplicationBuilder app)
-        {
-            app.UseLogRetrieval()!.WithSecret(Configuration.GetSection("LogRetrieval:Secret").Value??"");
-            ShowMoreErrorsInDevelopmentEnviornment(app);
+    public void Configure(IApplicationBuilder app)
+    {
+        app.UseLogRetrieval()!.WithSecret(Configuration.GetSection("LogRetrieval:Secret").Value??"");
+        ShowMoreErrorsInDevelopmentEnviornment(app);
 
-            EnforceHttpsConnectionsOnly(app);
+        EnforceHttpsConnectionsOnly(app);
 
-            app.UseSerilogRequestLogging();
+        app.UseSerilogRequestLogging();
             
-            app.UseStaticFiles();
+        app.UseStaticFiles();
             
-            app.UseRouting();
+        app.UseRouting();
             
-            app.UseTokenService();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapDefaultControllerRoute().RequireAuthorization();
-            });
-        }
-
-        private static void EnforceHttpsConnectionsOnly(IApplicationBuilder app)
+        app.UseTokenService();
+        app.UseAuthorization();
+        app.UseEndpoints(endpoints =>
         {
-            app.UseHttpsRedirection();
-            app.UseHsts();
-        }
+            endpoints.MapDefaultControllerRoute().RequireAuthorization();
+        });
+    }
 
-        private void ShowMoreErrorsInDevelopmentEnviornment(IApplicationBuilder app)
+    private static void EnforceHttpsConnectionsOnly(IApplicationBuilder app)
+    {
+        app.UseHttpsRedirection();
+        app.UseHsts();
+    }
+
+    private void ShowMoreErrorsInDevelopmentEnviornment(IApplicationBuilder app)
+    {
+        if (Environment.IsDevelopment())
         {
-            if (Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseMigrationsEndPoint();
-            }
-
-            app.UseExceptionLogger()?.WithEmailTarget("johnmelville@gmail.com");
+            app.UseDeveloperExceptionPage();
+            app.UseMigrationsEndPoint();
         }
+
+        app.UseExceptionLogger()?.WithEmailTarget("johnmelville@gmail.com");
     }
 }
